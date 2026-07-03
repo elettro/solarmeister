@@ -258,6 +258,27 @@
   .persona p{font-size:13px; color:var(--ink-soft); margin:0 0 8px;}
   .persona .basket{font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700; color:var(--signal);}
 
+  /* ---------- LOGO CAROUSEL ---------- */
+  .logo-carousel{
+    display:flex; gap:18px; overflow-x:auto; padding:6px 2px 14px;
+    scroll-snap-type:x proximity;
+  }
+  .logo-carousel::-webkit-scrollbar{height:6px;}
+  .logo-carousel::-webkit-scrollbar-thumb{background:var(--line); border-radius:999px;}
+  .logo-item{
+    flex:0 0 auto; width:180px; scroll-snap-align:start;
+    border:1px solid var(--line); border-radius:12px; background:var(--white);
+    display:flex; align-items:center; justify-content:center; padding:14px;
+  }
+  .logo-item img{width:100%; height:120px; object-fit:contain;}
+
+  /* ---------- BRAND SONGS ---------- */
+  .song-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;}
+  @media(max-width:700px){.song-grid{grid-template-columns:1fr;}}
+  .song-card{border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--white);}
+  .song-card .song-title{font-weight:700; color:var(--navy); font-size:14px; margin-bottom:10px;}
+  .song-card audio{width:100%; height:36px;}
+
   /* ---------- FAQ ACCORDION ---------- */
   .faq-item{border-bottom:1px solid var(--line);}
   .faq-q{
@@ -669,6 +690,36 @@
     <span class="de">Typografie: serifenlose Systemschrift (Inter/Roboto), großzügige Weißräume, flache technische Vektorillustrationen. Bildsprache: echte Montagesituationen, Hände am Werk — keine Stock-Klischees.</span>
     <span class="en">Typography: sans-serif system font (Inter/Roboto), generous white space, flat technical vector illustrations. Imagery: real installation moments, hands at work — no stock clichés.</span>
   </p>
+
+  <h4 style="margin:38px 0 4px;color:var(--navy);font-size:18px;"><span class="de">Logo-Varianten</span><span class="en">Logo variants</span></h4>
+  <div class="logo-carousel">
+    <div class="logo-item"><img src="logos/solar-meister-logo-v1- (1).png" alt="SolarMeister logo variant 1"></div>
+    <div class="logo-item"><img src="logos/solar-meister-logo-v1- (2).png" alt="SolarMeister logo variant 2"></div>
+    <div class="logo-item"><img src="logos/solar-meister-logo-v1- (3).png" alt="SolarMeister logo variant 3"></div>
+    <div class="logo-item"><img src="logos/solar-meister-logo-v1- (1).jpeg" alt="SolarMeister logo variant 4"></div>
+    <div class="logo-item"><img src="logos/solar-meister-logo-v1- (2).jpeg" alt="SolarMeister logo variant 5"></div>
+    <div class="logo-item"><img src="logos/solar-meister-logo-v1- (3).jpeg" alt="SolarMeister logo variant 6"></div>
+  </div>
+
+  <h4 style="margin:38px 0 4px;color:var(--navy);font-size:18px;"><span class="de">Marken-Songs</span><span class="en">Brand songs</span></h4>
+  <div class="song-grid">
+    <div class="song-card">
+      <div class="song-title">SolarMeister — Track 01a</div>
+      <audio controls preload="metadata" src="songs/SolarMeister 01a.wav"></audio>
+    </div>
+    <div class="song-card">
+      <div class="song-title">SolarMeister — Track 01b</div>
+      <audio controls preload="metadata" src="songs/SolarMeister 01b.wav"></audio>
+    </div>
+    <div class="song-card">
+      <div class="song-title">SolarMeister — Track 02a</div>
+      <audio controls preload="metadata" src="songs/SolarMeister 02a.wav"></audio>
+    </div>
+    <div class="song-card">
+      <div class="song-title">SolarMeister — Track 02b</div>
+      <audio controls preload="metadata" src="songs/SolarMeister 02b.wav"></audio>
+    </div>
+  </div>
 </section>
 
 <!-- ============ 05 FAQ ============ -->
