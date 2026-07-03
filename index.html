@@ -543,11 +543,11 @@
         <button class="pod-speed" id="podSpeed">1×</button>
       </div>
       <div class="pod-links">
-        <a href="assets/podcast-solarmeister.m4a" download><span class="de">Audiodatei herunterladen</span><span class="en">Download audio file</span></a>
+        <a href="podcasts/Solaranlagen_ohne_Handwerker_einfach_selbst_bauen.m4a" download><span class="de">Audiodatei herunterladen</span><span class="en">Download audio file</span></a>
         <a href="https://www.dropbox.com/scl/fi/an8ppigr5vjz7gd8bzoj0/Solaranlagen_ohne_Handwerker_einfach_selbst_bauen.m4a?rlkey=uquboc9fmmyr5bs5jegys1lml&st=ra7lm9uv&dl=0" target="_blank" rel="noopener"><span class="de">In Dropbox öffnen ↗</span><span class="en">Open in Dropbox ↗</span></a>
       </div>
     </div>
-    <audio id="podAudio" src="assets/podcast-solarmeister.m4a" preload="metadata"></audio>
+    <audio id="podAudio" src="podcasts/Solaranlagen_ohne_Handwerker_einfach_selbst_bauen.m4a" preload="metadata"></audio>
   </div>
 </section>
 
@@ -562,15 +562,15 @@
 
   <div class="gallery">
     <div class="gitem" onclick="openModal(0)">
-      <div class="thumbwrap"><img src="assets/infographic-overview-en.png" alt="SolarMeister Overview"></div>
+      <div class="thumbwrap"><img src="infographics/SolarMeister_DIY_Energy_Strategy_Overview-wide.png" alt="SolarMeister Overview"></div>
       <div class="gcap"><b><span class="de">Strategie-Überblick</span><span class="en">Strategy overview</span></b><span class="zoomicon">＋ <span class="de">öffnen</span><span class="en">open</span></span></div>
     </div>
     <div class="gitem" onclick="openModal(1)">
-      <div class="thumbwrap"><img src="assets/infographic-strategie.png" alt="SolarMeister Strategie DIY-Photovoltaik"></div>
+      <div class="thumbwrap"><img src="infographics/SolarMeister__Strategie_für_DIY-Photovoltaik.png" alt="SolarMeister Strategie DIY-Photovoltaik"></div>
       <div class="gcap"><b><span class="de">Strategie DIY-Photovoltaik</span><span class="en">DIY-PV strategy</span></b><span class="zoomicon">＋ <span class="de">öffnen</span><span class="en">open</span></span></div>
     </div>
     <div class="gitem" onclick="openModal(2)">
-      <div class="thumbwrap"><img src="assets/infographic-partner.png" alt="SolarMeister DIY-Photovoltaik in Deutschland"></div>
+      <div class="thumbwrap"><img src="infographics/SolarMeister__DIY-Photovoltaik_in_Deutschland.png" alt="SolarMeister DIY-Photovoltaik in Deutschland"></div>
       <div class="gcap"><b><span class="de">Dein Partner in Deutschland</span><span class="en">Your partner in Germany</span></b><span class="zoomicon">＋ <span class="de">öffnen</span><span class="en">open</span></span></div>
     </div>
   </div>
@@ -1007,9 +1007,9 @@ function toggleFaq(i){
 
 // ---------------- GALLERY MODAL ----------------
 const IMAGES = [
-  {src:'assets/infographic-overview-en.png', capDe:'Strategie-Überblick', capEn:'Strategy overview'},
-  {src:'assets/infographic-strategie.png', capDe:'Strategie DIY-Photovoltaik', capEn:'DIY-PV strategy'},
-  {src:'assets/infographic-partner.png', capDe:'Dein Partner in Deutschland', capEn:'Your partner in Germany'},
+  {src:'infographics/SolarMeister_DIY_Energy_Strategy_Overview-wide.png', capDe:'Strategie-Überblick', capEn:'Strategy overview'},
+  {src:'infographics/SolarMeister__Strategie_für_DIY-Photovoltaik.png', capDe:'Strategie DIY-Photovoltaik', capEn:'DIY-PV strategy'},
+  {src:'infographics/SolarMeister__DIY-Photovoltaik_in_Deutschland.png', capDe:'Dein Partner in Deutschland', capEn:'Your partner in Germany'},
 ];
 let modalIndex = 0;
 function openModal(i){
