@@ -200,6 +200,23 @@
   .pod-links a:hover{color:#fff;}
   .pod-speed{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22); color:#fff; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:11px; padding:4px 8px; cursor:pointer;}
 
+  /* ---------- VIDEO CAROUSEL ---------- */
+  .video-block{
+    background:linear-gradient(135deg, var(--navy), var(--sky));
+    border-radius:20px; padding:30px; color:#fff; text-align:center;
+  }
+  .video-stage{position:relative; max-width:420px; margin:0 auto;}
+  .video-stage video{width:100%; aspect-ratio:1/1; display:block; border-radius:14px; background:#000; object-fit:contain;}
+  .video-nav{
+    position:absolute; top:50%; transform:translateY(-50%);
+    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
+    width:42px; height:42px; border-radius:50%; cursor:pointer; font-size:19px; transition:.15s;
+  }
+  .video-nav:hover{background:rgba(255,255,255,.28);}
+  .video-nav.prev{left:-14px;} .video-nav.next{right:-14px;}
+  @media(max-width:520px){.video-nav.prev{left:-6px;} .video-nav.next{right:-6px;}}
+  .video-caption{margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(255,255,255,.75);}
+
   /* ---------- GALLERY ---------- */
   .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
   @media(max-width:860px){.gallery{grid-template-columns:1fr;}}
@@ -468,6 +485,24 @@
       <div class="hstat"><div class="num">+6.3%</div><div class="lab"><span class="de">EBITDA-Marge 2029</span><span class="en">EBITDA margin 2029</span></div></div>
       <div class="hstat"><div class="num">≈€575T</div><div class="lab"><span class="de">Kapitalbedarf gesamt</span><span class="en">total capital requirement</span></div></div>
     </div>
+  </div>
+</section>
+
+<!-- ============ PROMO VIDEOS ============ -->
+<section id="promo-videos" class="wrap section-tight">
+  <div class="eyebrow"><span class="de">Vorschau</span><span class="en">Preview</span></div>
+  <h2 class="headline"><span class="de">Promo-Clips</span><span class="en">Promo clips</span></h2>
+  <p class="lede">
+    <span class="de">Kurze Video-Teaser für Social Media und Pitch. Mit den Pfeilen durch die Clips blättern.</span>
+    <span class="en">Short video teasers for social and pitch use. Use the arrows to cycle through the clips.</span>
+  </p>
+  <div class="video-block">
+    <div class="video-stage">
+      <button class="video-nav prev" id="vidPrev" aria-label="Previous clip">‹</button>
+      <video id="promoVideo" controls playsinline></video>
+      <button class="video-nav next" id="vidNext" aria-label="Next clip">›</button>
+    </div>
+    <div class="video-caption" id="vidCaption"></div>
   </div>
 </section>
 
@@ -1012,6 +1047,7 @@ function setLang(lang){
   document.documentElement.setAttribute('lang', lang);
   try{ localStorage.setItem('sm_lang', lang); }catch(e){}
   renderFaq();
+  updateVideo();
 }
 
 // ---------------- FAQ DATA + RENDER ----------------
@@ -1056,6 +1092,30 @@ function renderFaq(){
 function toggleFaq(i){
   document.getElementById('faqi-'+i).classList.toggle('open');
 }
+
+// ---------------- PROMO VIDEO CAROUSEL ----------------
+const VIDEOS = [
+  {src:'videos/Solar-meister-promo-clip-1.mp4', capDe:'Clip 1 / 2', capEn:'Clip 1 / 2'},
+  {src:'videos/Solar-meister-promo-clip-2-1x1.mp4', capDe:'Clip 2 / 2', capEn:'Clip 2 / 2'},
+];
+let videoIndex = 0;
+const promoVideo = document.getElementById('promoVideo');
+const vidCaption = document.getElementById('vidCaption');
+function updateVideo(){
+  const lang = document.body.getAttribute('data-lang');
+  const item = VIDEOS[videoIndex];
+  promoVideo.src = item.src;
+  vidCaption.textContent = lang==='de' ? item.capDe : item.capEn;
+}
+document.getElementById('vidPrev').addEventListener('click', function(){
+  videoIndex = (videoIndex - 1 + VIDEOS.length) % VIDEOS.length;
+  updateVideo();
+});
+document.getElementById('vidNext').addEventListener('click', function(){
+  videoIndex = (videoIndex + 1) % VIDEOS.length;
+  updateVideo();
+});
+updateVideo();
 
 // ---------------- GALLERY MODAL ----------------
 const IMAGES = [
