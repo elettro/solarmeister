@@ -207,6 +207,7 @@
   .gitem:hover{box-shadow:0 10px 26px rgba(31,56,100,.14); transform:translateY(-2px);}
   .gitem .thumbwrap{overflow:hidden; aspect-ratio:16/11; background:var(--paper-2); display:flex; align-items:center;}
   .gitem img{width:50%; margin:0 auto; transform:scale(1); transition:.25s;}
+  .gitem.wide img{width:100%;}
   .gitem:hover img{transform:scale(1.04);}
   .gitem .gcap{padding:14px 16px; font-size:13px; color:var(--ink-soft); border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
   .gitem .gcap b{color:var(--navy); font-size:13.5px;}
@@ -561,11 +562,11 @@
   </p>
 
   <div class="gallery">
-    <div class="gitem" onclick="openModal(0)">
+    <div class="gitem wide" onclick="openModal(0)">
       <div class="thumbwrap"><img src="infographics/SolarMeister_DIY_Energy_Strategy_Overview-wide.png" alt="SolarMeister Overview"></div>
       <div class="gcap"><b><span class="de">Strategie-Überblick</span><span class="en">Strategy overview</span></b><span class="zoomicon">＋ <span class="de">öffnen</span><span class="en">open</span></span></div>
     </div>
-    <div class="gitem" onclick="openModal(1)">
+    <div class="gitem wide" onclick="openModal(1)">
       <div class="thumbwrap"><img src="infographics/SolarMeister__Strategie_für_DIY-Photovoltaik.png" alt="SolarMeister Strategie DIY-Photovoltaik"></div>
       <div class="gcap"><b><span class="de">Strategie DIY-Photovoltaik</span><span class="en">DIY-PV strategy</span></b><span class="zoomicon">＋ <span class="de">öffnen</span><span class="en">open</span></span></div>
     </div>
