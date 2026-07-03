@@ -289,6 +289,22 @@
   }
   .logo-item img{width:100%; height:120px; object-fit:contain;}
 
+  /* ---------- MARKETING IMAGERY CAROUSEL ---------- */
+  .img-carousel{position:relative; max-width:640px; margin:8px auto 0; user-select:none;}
+  .img-stage{position:relative; aspect-ratio:16/9; border-radius:var(--radius); overflow:hidden; background:var(--paper-2); border:1px solid var(--line);}
+  .img-stage img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .5s ease; cursor:zoom-in;}
+  .img-stage img.active{opacity:1;}
+  .img-arrow{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+    width:40px; height:40px; border-radius:50%; cursor:pointer;
+    background:rgba(27,36,48,.45); border:1px solid rgba(255,255,255,.5); color:#fff; font-size:18px;
+  }
+  .img-arrow:hover{background:rgba(27,36,48,.7);}
+  .img-arrow.prev{left:10px;} .img-arrow.next{right:10px;}
+  .img-dots{display:flex; justify-content:center; gap:6px; margin-top:12px; flex-wrap:wrap;}
+  .img-dot{width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; transition:.15s;}
+  .img-dot.active{background:var(--signal); width:18px; border-radius:4px;}
+
   /* ---------- BRAND SONGS ---------- */
   .song-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px;}
   @media(max-width:700px){.song-grid{grid-template-columns:1fr;}}
@@ -736,6 +752,15 @@
     <div class="logo-item"><img src="logos/solar-meister-logo-v1- (3).jpeg" alt="SolarMeister logo variant 6"></div>
   </div>
 
+  <h4 style="margin:38px 0 4px;color:var(--navy);font-size:18px;"><span class="de">Beispiele für Marketing-Bildwelt</span><span class="en">Examples of marketing imagery</span></h4>
+  <div class="img-carousel" id="imgCarousel">
+    <div class="img-stage" id="imgStage">
+      <button class="img-arrow prev" id="imgPrev" aria-label="Previous image">‹</button>
+      <button class="img-arrow next" id="imgNext" aria-label="Next image">›</button>
+    </div>
+    <div class="img-dots" id="imgDots"></div>
+  </div>
+
   <h4 style="margin:38px 0 4px;color:var(--navy);font-size:18px;"><span class="de">Marken-Songs</span><span class="en">Brand songs</span></h4>
   <div class="song-grid">
     <div class="song-card">
@@ -1116,6 +1141,76 @@ document.getElementById('vidNext').addEventListener('click', function(){
   updateVideo();
 });
 updateVideo();
+
+// ---------------- MARKETING IMAGERY CAROUSEL ----------------
+const MKT_IMAGES = [
+  'images/16x9/award2.png',
+  'images/16x9/solar-meister-man-house-16x9-award-1 (10).png',
+  'images/16x9/solar-meister-man-house-16x9- (1).png',
+  'images/16x9/solar-meister-man-house-16x9- (9).png',
+  'images/16x9/solar-meister-man-house-16x9- (11).png',
+  'images/16x9/solar-meister-man-house-16x9- (12).png',
+  'images/16x9/solar-meister-man-house-16x9- (13).png',
+  'images/16x9/solar-meister-man-house-16x9- (14).png',
+  'images/16x9/solar-meister-man-house-16x9- (15).png',
+  'images/16x9/solar-meister-man-house-16x9- (16).png',
+  'images/16x9/solar-meister-man-house-16x9- (17).png',
+  'images/16x9/solar-meister-man-house-16x9- (18).png',
+  'images/16x9/solar-meister-man-house-16x9- (19).png',
+];
+(function(){
+  const stage = document.getElementById('imgStage');
+  const dotsWrap = document.getElementById('imgDots');
+  const prevBtn = document.getElementById('imgPrev');
+  const nextBtn = document.getElementById('imgNext');
+  let mktIndex = 0;
+  let timer = null;
+
+  MKT_IMAGES.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'SolarMeister marketing imagery ' + (i + 1);
+    if (i === 0) img.classList.add('active');
+    stage.insertBefore(img, prevBtn);
+    const dot = document.createElement('div');
+    dot.className = 'img-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(dot);
+  });
+  const imgs = stage.querySelectorAll('img');
+  const dots = dotsWrap.querySelectorAll('.img-dot');
+
+  function render(){
+    imgs.forEach((img, i) => img.classList.toggle('active', i === mktIndex));
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === mktIndex));
+  }
+  function goTo(i){
+    mktIndex = (i + MKT_IMAGES.length) % MKT_IMAGES.length;
+    render();
+    resetTimer();
+  }
+  function next(){ goTo(mktIndex + 1); }
+  function prev(){ goTo(mktIndex - 1); }
+  function resetTimer(){
+    if (timer) clearInterval(timer);
+    timer = setInterval(next, 7000);
+  }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  let touchStartX = null;
+  stage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+  stage.addEventListener('touchend', e => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) { dx < 0 ? next() : prev(); }
+    touchStartX = null;
+  }, {passive:true});
+
+  render();
+  resetTimer();
+})();
 
 // ---------------- GALLERY MODAL ----------------
 const IMAGES = [
