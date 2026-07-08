@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SolarMeister Favicon Approval Gallery</title>
+  <style>
+    :root {
+      --green: #5db13f;
+      --green-dark: #3f8f2d;
+      --slate: #1a2530;
+      --slate-2: #24313d;
+      --ink: #0f1720;
+      --sand: #faf9f5;
+      --card: #ffffff;
+      --muted: #667085;
+      --border: #e6e8eb;
+      --shadow: 0 18px 48px rgba(15, 23, 32, 0.12);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Manrope, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(93, 177, 63, 0.12), transparent 32%),
+        linear-gradient(180deg, #ffffff 0%, var(--sand) 100%);
+      color: var(--ink);
+    }
+
+    .page {
+      width: min(1240px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 28px;
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .panel-mark {
+      display: inline-flex;
+      gap: 5px;
+      transform: skewX(-23deg);
+    }
+
+    .panel-mark span {
+      display: block;
+      width: 8px;
+      height: 18px;
+      border-radius: 2px;
+      background: var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--slate);
+      font-size: clamp(34px, 5vw, 66px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .approval-note {
+      justify-self: end;
+      max-width: 360px;
+      padding: 20px;
+      border-radius: 20px;
+      background: var(--slate);
+      color: #fff;
+    }
+
+    .approval-note strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .approval-note span {
+      color: rgba(255,255,255,0.72);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 10px 30px rgba(15, 23, 32, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      background: var(--green);
+      color: #fff;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .meta h2 {
+      margin: 1px 0 4px;
+      color: var(--slate);
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .meta code {
+      display: block;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .favicon-large {
+      width: 52px;
+      height: 52px;
+      padding: 7px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background:
+        linear-gradient(45deg, #f0f2f4 25%, transparent 25%),
+        linear-gradient(-45deg, #f0f2f4 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f0f2f4 75%),
+        linear-gradient(-45deg, transparent 75%, #f0f2f4 75%);
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-size: 16px 16px;
+      object-fit: contain;
+    }
+
+    .browser {
+      margin: 18px;
+      overflow: hidden;
+      border: 1px solid #ccd2d8;
+      border-radius: 18px;
+      background: #f7f9fb;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .browser-top {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 46px;
+      padding: 0 14px;
+      border-bottom: 1px solid #d8dde3;
+      background: linear-gradient(180deg, #f6f8fb, #edf1f5);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      background: #c8ced6;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      width: min(300px, 70%);
+      height: 32px;
+      margin-left: 5px;
+      padding: 0 12px;
+      border: 1px solid #d1d7de;
+      border-bottom-color: #fff;
+      border-radius: 12px 12px 0 0;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate);
+    }
+
+    .tab img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .tab span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .urlbar {
+      display: flex;
+      align-items: center;
+      height: 34px;
+      margin: 10px 14px 0;
+      padding: 0 13px;
+      border: 1px solid #dbe0e6;
+      border-radius: 999px;
+      background: #fff;
+      color: #7b8794;
+      font-size: 12px;
+    }
+
+    .browser-content {
+      padding: 20px 20px 24px;
+      background:
+        linear-gradient(135deg, rgba(93,177,63,0.08), transparent 42%),
+        #ffffff;
+    }
+
+    .mock-site {
+      border: 1px solid #eef0f2;
+      border-radius: 16px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .mock-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #eef0f2;
+    }
+
+    .mock-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--slate);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .mock-brand img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+
+    .mock-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .mock-links span {
+      width: 46px;
+      height: 8px;
+      border-radius: 999px;
+      background: #dfe5e8;
+    }
+
+    .mock-hero {
+      display: grid;
+      grid-template-columns: 1fr 0.6fr;
+      gap: 18px;
+      padding: 20px 16px;
+      align-items: center;
+    }
+
+    .lines {
+      display: grid;
+      gap: 8px;
+    }
+
+    .line {
+      height: 10px;
+      border-radius: 999px;
+      background: #e6ebef;
+    }
+
+    .line.dark {
+      width: 86%;
+      height: 18px;
+      background: var(--slate);
+    }
+
+    .line.green {
+      width: 62%;
+      background: var(--green);
+    }
+
+    .line.short {
+      width: 50%;
+    }
+
+    .mock-product {
+      aspect-ratio: 1 / 0.78;
+      border-radius: 14px;
+      background:
+        linear-gradient(145deg, rgba(93,177,63,0.22), rgba(26,37,48,0.08)),
+        #f5f8f4;
+      border: 1px solid #e4eadf;
+    }
+
+    .approval-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 0 18px 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill.approve {
+      border-color: rgba(93, 177, 63, 0.28);
+      color: var(--green-dark);
+      background: rgba(93, 177, 63, 0.09);
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding: 22px;
+      border-radius: 22px;
+      background: var(--slate);
+      color: rgba(255,255,255,0.76);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .footer strong {
+      color: #fff;
+    }
+
+    @media (max-width: 880px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .approval-note {
+        justify-self: stretch;
+        max-width: none;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .hero,
+      .card {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">
+          <span class="panel-mark"><span></span><span></span><span></span></span>
+          SolarMeister favicon approvals
+        </div>
+        <h1>Favicon gallery</h1>
+        <p>Review the 10 favicon options in a browser-style preview. Each card is numbered for fast client approvals.</p>
+      </div>
+      <div class="approval-note">
+        <strong>Approval format</strong>
+        <span>Use “Approve option 3” or “Revise option 7” so the final favicon set is easy to lock.</span>
+      </div>
+    </section>
+
+    <section class="grid" id="gallery" aria-label="SolarMeister favicon approval gallery"></section>
+
+    <div class="footer">
+      <strong>Image path note:</strong> this page first looks for icons in <code>favicon/favicon-option- (1).png</code> through <code>favicon/favicon-option- (10).png</code>. If you place this HTML inside the favicon folder, the image fallback also checks <code>favicon-option- (1).png</code> through <code>favicon-option- (10).png</code>.
+    </div>
+  </main>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+
+    const icons = Array.from({ length: 10 }, (_, index) => {
+      const number = index + 1;
+      const file = `favicon-option- (${number}).png`;
+      return {
+        number,
+        file,
+        primaryPath: `favicon/${file}`,
+        fallbackPath: file
+      };
+    });
+
+    function attachFallback(img, fallbackPath) {
+      img.onerror = () => {
+        if (!img.dataset.fallbackUsed) {
+          img.dataset.fallbackUsed = 'true';
+          img.src = fallbackPath;
+        }
+      };
+    }
+
+    icons.forEach(icon => {
+      const card = document.createElement('article');
+      card.className = 'card';
+
+      card.innerHTML = `
+        <header class="card-header">
+          <div class="number">${icon.number}</div>
+          <div class="meta">
+            <h2>Favicon option ${icon.number}</h2>
+            <code>${icon.file}</code>
+          </div>
+          <img class="favicon-large" alt="SolarMeister favicon option ${icon.number}" src="${icon.primaryPath}" data-fallback="${icon.fallbackPath}">
+        </header>
+
+        <div class="browser">
+          <div class="browser-top">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <div class="tab">
+              <img alt="" src="${icon.primaryPath}" data-fallback="${icon.fallbackPath}">
+              <span>SolarMeister | Balkon Solar</span>
+            </div>
+          </div>
+          <div class="urlbar">https://solarmeister.de</div>
+          <div class="browser-content">
+            <div class="mock-site">
+              <div class="mock-nav">
+                <div class="mock-brand">
+                  <img alt="" src="${icon.primaryPath}" data-fallback="${icon.fallbackPath}">
+                  <span>SolarMeister</span>
+                </div>
+                <div class="mock-links" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="mock-hero">
+                <div class="lines" aria-hidden="true">
+                  <div class="line dark"></div>
+                  <div class="line green"></div>
+                  <div class="line"></div>
+                  <div class="line short"></div>
+                </div>
+                <div class="mock-product" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="approval-strip">
+          <span class="pill approve">Approval #${icon.number}</span>
+          <span class="pill">Browser tab</span>
+          <span class="pill">Header preview</span>
+        </div>
+      `;
+
+      card.querySelectorAll('img[data-fallback]').forEach(img => {
+        attachFallback(img, img.dataset.fallback);
+      });
+
+      gallery.appendChild(card);
+    });
+  </script>
+</body>
+</html>
