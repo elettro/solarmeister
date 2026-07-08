@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar Meister Legal Pages Checklist</title>
+  <style>
+    :root {
+      --bg: #07130f;
+      --panel: #0d1f19;
+      --panel-2: #10281f;
+      --line: rgba(255,255,255,.12);
+      --text: #f4fff9;
+      --muted: #b8cec4;
+      --green: #72f2a5;
+      --green-dark: #153d2a;
+      --yellow: #ffd166;
+      --red: #ff6b6b;
+      --blue: #9dc6ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(114,242,165,.18), transparent 34rem),
+        radial-gradient(circle at top right, rgba(157,198,255,.12), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 60px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.5fr .9fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero, .progress-card, .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 28px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid rgba(114,242,165,.28);
+      border-radius: 999px;
+      background: rgba(114,242,165,.08);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 750;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(32px, 4vw, 56px);
+      line-height: .96;
+      letter-spacing: -.05em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .progress-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 250px;
+    }
+
+    .progress-number {
+      font-size: 58px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -.06em;
+      color: var(--green);
+    }
+
+    .progress-label {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .bar {
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      margin: 18px 0;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), #c8ffd9);
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 24px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button, select, input[type="search"] {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 12px;
+      min-height: 42px;
+      padding: 10px 13px;
+      font: inherit;
+      font-weight: 700;
+      outline: none;
+    }
+
+    select option {
+      color: #0c1713;
+      background: #ffffff;
+    }
+
+    button {
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.1);
+      border-color: rgba(114,242,165,.36);
+    }
+
+    .primary {
+      background: rgba(114,242,165,.14);
+      border-color: rgba(114,242,165,.34);
+      color: var(--green);
+    }
+
+    .danger {
+      color: var(--red);
+    }
+
+    input[type="search"] {
+      width: min(360px, 100%);
+      font-weight: 600;
+    }
+
+    .sections {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section {
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 20px;
+      background: linear-gradient(90deg, rgba(114,242,165,.11), rgba(255,255,255,.03));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.02em;
+    }
+
+    .section-meta {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .items {
+      display: grid;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 36px 1fr 180px 132px;
+      gap: 14px;
+      align-items: start;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.01);
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    .item.done {
+      background: rgba(114,242,165,.06);
+    }
+
+    .item.done .item-title {
+      color: var(--green);
+    }
+
+    .check {
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.04);
+      margin-top: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .check:checked {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .check:checked::after {
+      content: "✓";
+      position: absolute;
+      inset: -3px 0 0;
+      text-align: center;
+      color: #082017;
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .item-title {
+      font-size: 17px;
+      font-weight: 850;
+      letter-spacing: -.01em;
+      margin: 0 0 5px;
+    }
+
+    .item-desc {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(255,255,255,.04);
+    }
+
+    .chip.high {
+      color: var(--red);
+      border-color: rgba(255,107,107,.34);
+      background: rgba(255,107,107,.08);
+    }
+
+    .chip.medium {
+      color: var(--yellow);
+      border-color: rgba(255,209,102,.34);
+      background: rgba(255,209,102,.08);
+    }
+
+    .chip.solar {
+      color: var(--blue);
+      border-color: rgba(157,198,255,.34);
+      background: rgba(157,198,255,.08);
+    }
+
+    .owner, .status {
+      width: 100%;
+    }
+
+    .notes {
+      grid-column: 2 / 5;
+      display: none;
+      padding-top: 2px;
+    }
+
+    .notes textarea {
+      width: 100%;
+      min-height: 76px;
+      resize: vertical;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font: inherit;
+      padding: 12px;
+      outline: none;
+    }
+
+    .item.show-notes .notes {
+      display: block;
+    }
+
+    .small-btn {
+      min-height: 34px;
+      padding: 7px 10px;
+      font-size: 12px;
+      border-radius: 10px;
+    }
+
+    .build-order {
+      margin-top: 24px;
+      padding: 22px;
+    }
+
+    .build-order h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      letter-spacing: -.03em;
+    }
+
+    .order-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap: 10px;
+      counter-reset: step;
+    }
+
+    .step {
+      counter-increment: step;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255,255,255,.035);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .step::before {
+      content: counter(step);
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(114,242,165,.16);
+      color: var(--green);
+      margin-right: 6px;
+      font-weight: 950;
+    }
+
+    footer {
+      color: var(--muted);
+      margin-top: 28px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 920px) {
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .item {
+        grid-template-columns: 34px 1fr;
+      }
+
+      .owner, .status {
+        grid-column: 2;
+      }
+
+      .notes {
+        grid-column: 2;
+      }
+
+      .order-grid {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        width: min(100% - 22px, 1180px);
+        padding-top: 18px;
+      }
+
+      .hero, .progress-card, .build-order {
+        padding: 18px;
+      }
+
+      .section-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .item {
+        padding: 15px;
+      }
+
+      .order-grid {
+        grid-template-columns: 1fr;
+      }
+
+      input[type="search"] {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111;
+      }
+
+      .hero, .progress-card, .section, .build-order {
+        box-shadow: none;
+        border-color: #ddd;
+        background: #fff;
+      }
+
+      .toolbar {
+        display: none;
+      }
+
+      .item-desc, .section-meta, .progress-label, footer, .chip {
+        color: #333;
+      }
+
+      .notes {
+        display: block;
+      }
+
+      select, textarea, button, input[type="search"] {
+        border-color: #bbb;
+        color: #111;
+        background: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <section class="hero">
+        <div class="eyebrow">Solar Meister Launch Control</div>
+        <h1>German Shopify Legal Pages Checklist</h1>
+        <p>
+          Track every legal, compliance, VAT, shipping, product safety, and solar-specific page needed before launching the Solar Meister Shopify store in Germany.
+        </p>
+      </section>
+
+      <aside class="progress-card">
+        <div>
+          <div class="progress-number"><span id="doneCount">0</span>/<span id="totalCount">0</span></div>
+          <div class="progress-label">Checklist items completed</div>
+          <div class="bar"><span id="progressBar"></span></div>
+          <div class="progress-label" id="progressText">0% complete</div>
+        </div>
+        <button class="primary" id="exportBtn">Export Progress JSON</button>
+      </aside>
+    </header>
+
+    <nav class="toolbar" aria-label="Checklist controls">
+      <div class="toolbar-left">
+        <input id="searchBox" type="search" placeholder="Search checklist..." />
+        <select id="filterStatus" aria-label="Filter by status">
+          <option value="all">All statuses</option>
+          <option value="not-started">Not started</option>
+          <option value="in-progress">In progress</option>
+          <option value="review">Needs review</option>
+          <option value="done">Done</option>
+        </select>
+        <select id="filterPriority" aria-label="Filter by priority">
+          <option value="all">All priorities</option>
+          <option value="high">High priority</option>
+          <option value="medium">Medium priority</option>
+          <option value="standard">Standard priority</option>
+        </select>
+      </div>
+      <div class="toolbar-right">
+        <button id="expandNotesBtn">Show Notes</button>
+        <button id="printBtn">Print</button>
+        <button class="danger" id="resetBtn">Reset</button>
+      </div>
+    </nav>
+
+    <section class="sections" id="checklist"></section>
+
+    <section class="panel build-order">
+      <h2>Best Build Order</h2>
+      <div class="order-grid">
+        <div class="step">Impressum</div>
+        <div class="step">Datenschutzerklärung</div>
+        <div class="step">Cookie-Richtlinie</div>
+        <div class="step">AGB</div>
+        <div class="step">Widerrufsbelehrung</div>
+        <div class="step">Muster-Widerrufsformular</div>
+        <div class="step">Versand & Lieferung</div>
+        <div class="step">Zahlungsarten</div>
+        <div class="step">Rückgabe & Reklamation</div>
+        <div class="step">0% MwSt. Photovoltaik</div>
+        <div class="step">WEEE / Elektrogeräte-Rücknahme</div>
+        <div class="step">Batterie-Rücknahme</div>
+        <div class="step">Verpackungsgesetz / LUCID</div>
+        <div class="step">Produktsicherheit / GPSR</div>
+        <div class="step">Montage- und Installationshinweise</div>
+      </div>
+    </section>
+
+    <footer>
+      Solar Meister internal launch checklist. Progress saves locally in this browser.
+    </footer>
+  </main>
+
+  <script>
+    const checklistData = [
+      {
+        section: "Core German Legal Pages",
+        items: [
+          {
+            id: "impressum",
+            title: "Impressum",
+            desc: "Company identity page with legal name, legal form, address, email, phone, managing director, VAT ID, register court, and registration number if applicable.",
+            priority: "high",
+            tags: ["Required", "German shop"]
+          },
+          {
+            id: "datenschutz",
+            title: "Datenschutzerklärung",
+            desc: "Privacy policy covering Shopify, payments, analytics, Google tools, contact forms, cookies, customer accounts, order processing, hosting, and GDPR rights.",
+            priority: "high",
+            tags: ["Required", "GDPR"]
+          },
+          {
+            id: "cookie",
+            title: "Cookie-Richtlinie / Cookie-Einstellungen",
+            desc: "Explain essential, analytics, and marketing cookies. Link to consent settings so customers can change choices later.",
+            priority: "high",
+            tags: ["Consent", "Tracking"]
+          },
+          {
+            id: "agb",
+            title: "Allgemeine Geschäftsbedingungen",
+            desc: "Terms of sale covering contract formation, prices, payment, delivery, retention of title, warranty, B2C/B2B terms, compatibility, and quote orders.",
+            priority: "high",
+            tags: ["Required", "Terms"]
+          }
+        ]
+      },
+      {
+        section: "Consumer Rights and Returns",
+        items: [
+          {
+            id: "widerruf",
+            title: "Widerrufsbelehrung",
+            desc: "German cancellation policy for consumer distance selling. Needed for online orders.",
+            priority: "high",
+            tags: ["B2C", "Returns"]
+          },
+          {
+            id: "widerrufsformular",
+            title: "Muster-Widerrufsformular",
+            desc: "Model cancellation form. Put it under the cancellation policy or give it its own page.",
+            priority: "high",
+            tags: ["B2C", "Form"]
+          },
+          {
+            id: "widerrufsbutton",
+            title: "Widerrufsbutton Page / Function",
+            desc: "Create the future online cancellation function for consumer contracts. Useful to plan now, even if launched later.",
+            priority: "medium",
+            tags: ["2026", "Function"]
+          },
+          {
+            id: "rueckgabe",
+            title: "Rückgabe & Reklamation",
+            desc: "Separate from cancellation. Cover damaged freight, wrong items, defective products, warranty claims, return condition, return shipping, and RMA process.",
+            priority: "high",
+            tags: ["Support", "Freight"]
+          }
+        ]
+      },
+      {
+        section: "Shop Operations",
+        items: [
+          {
+            id: "versand",
+            title: "Versand & Lieferung",
+            desc: "Explain Paket, Spedition, Palette, Langgut, Gefahrgut, delivery zones, lead times, curbside delivery, partial deliveries, freight damage inspection, and pickup.",
+            priority: "high",
+            tags: ["Shipping", "Freight"]
+          },
+          {
+            id: "zahlung",
+            title: "Zahlungsarten",
+            desc: "Explain Shopify Payments, PayPal, Klarna if used, bank transfer, invoice payment, B2B payment terms, and order processing after payment.",
+            priority: "high",
+            tags: ["Checkout", "Payments"]
+          },
+          {
+            id: "kontakt",
+            title: "Kontakt",
+            desc: "Include email, phone, address, business hours, support form, freight damage contact, returns contact, and quote request contact.",
+            priority: "standard",
+            tags: ["Trust", "Support"]
+          },
+          {
+            id: "streitbeilegung",
+            title: "Streitbeilegung / Verbraucherstreitbeilegung",
+            desc: "State the business position on consumer dispute resolution participation. Often placed in Impressum or AGB.",
+            priority: "standard",
+            tags: ["Consumer", "Legal"]
+          }
+        ]
+      },
+      {
+        section: "Solar-Specific Compliance",
+        items: [
+          {
+            id: "mwst0",
+            title: "0% MwSt. Photovoltaik",
+            desc: "Explain eligibility, customer confirmation, products covered, cases where 19% VAT applies, and how mixed carts are handled.",
+            priority: "high",
+            tags: ["Solar", "VAT"]
+          },
+          {
+            id: "weee",
+            title: "Elektrogeräte-Rücknahme / WEEE",
+            desc: "Needed for inverters, microinverters, electronics, and monitoring products. Cover registration, take-back, disposal, and crossed-out bin information.",
+            priority: "high",
+            tags: ["Solar", "WEEE"]
+          },
+          {
+            id: "batterie",
+            title: "Batterie-Rücknahme & Batterieentsorgung",
+            desc: "Needed because the catalog includes battery storage. Cover take-back, disposal, safety, hazardous shipping notes, and registration responsibilities.",
+            priority: "high",
+            tags: ["Solar", "Battery"]
+          },
+          {
+            id: "lucid",
+            title: "Verpackungsgesetz / LUCID",
+            desc: "Packaging registration and system participation page. Relevant because the store ships packaged goods in Germany.",
+            priority: "high",
+            tags: ["Packaging", "Germany"]
+          }
+        ]
+      },
+      {
+        section: "Product Safety and Liability Control",
+        items: [
+          {
+            id: "gpsr",
+            title: "Produktsicherheit / GPSR",
+            desc: "Add manufacturer, EU responsible person where needed, model identifiers, safety warnings, manuals, datasheets, CE/VDE references, and recall contact process.",
+            priority: "high",
+            tags: ["Safety", "EU"]
+          },
+          {
+            id: "montage",
+            title: "Montage- und Installationshinweise",
+            desc: "Explain DIY limits, electrician requirements, grid connection responsibility, roof suitability, structural responsibility, and local registration obligations.",
+            priority: "high",
+            tags: ["Solar", "Installation"]
+          },
+          {
+            id: "garantie",
+            title: "Gewährleistung & Garantie",
+            desc: "Explain legal warranty versus manufacturer warranty. Cover product warranties, performance warranties, inverter warranties, and battery warranties.",
+            priority: "high",
+            tags: ["Warranty", "Trust"]
+          }
+        ]
+      },
+      {
+        section: "Trust and Future Compliance",
+        items: [
+          {
+            id: "barrierefreiheit",
+            title: "Barrierefreiheit",
+            desc: "Simple accessibility statement page. Useful for customer trust and future compliance.",
+            priority: "standard",
+            tags: ["Accessibility", "Trust"]
+          },
+          {
+            id: "ueber-uns",
+            title: "Über uns",
+            desc: "Not strictly legal, but important for trust. Explain the company, market focus, German support, and solar product expertise.",
+            priority: "standard",
+            tags: ["Trust", "Brand"]
+          }
+        ]
+      }
+    ];
+
+    const stateKey = "solarMeisterLegalChecklist.v1";
+    const state = JSON.parse(localStorage.getItem(stateKey) || "{}");
+    const checklist = document.getElementById("checklist");
+    const doneCount = document.getElementById("doneCount");
+    const totalCount = document.getElementById("totalCount");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const searchBox = document.getElementById("searchBox");
+    const filterStatus = document.getElementById("filterStatus");
+    const filterPriority = document.getElementById("filterPriority");
+    const expandNotesBtn = document.getElementById("expandNotesBtn");
+    let notesOpen = false;
+
+    function save() {
+      localStorage.setItem(stateKey, JSON.stringify(state));
+      updateProgress();
+    }
+
+    function ensureItem(id) {
+      if (!state[id]) {
+        state[id] = { done: false, status: "not-started", owner: "", notes: "" };
+      }
+      return state[id];
+    }
+
+    function render() {
+      checklist.innerHTML = "";
+
+      checklistData.forEach(group => {
+        const section = document.createElement("section");
+        section.className = "section";
+        section.dataset.section = group.section.toLowerCase();
+
+        const head = document.createElement("div");
+        head.className = "section-head";
+        head.innerHTML = `
+          <h2 class="section-title">${group.section}</h2>
+          <div class="section-meta">${group.items.length} items</div>
+        `;
+
+        const items = document.createElement("div");
+        items.className = "items";
+
+        group.items.forEach(item => {
+          const itemState = ensureItem(item.id);
+          const row = document.createElement("article");
+          row.className = "item";
+          row.dataset.id = item.id;
+          row.dataset.priority = item.priority;
+          row.dataset.status = itemState.status;
+          row.dataset.search = `${item.title} ${item.desc} ${item.tags.join(" ")} ${group.section}`.toLowerCase();
+
+          if (itemState.done) row.classList.add("done");
+          if (notesOpen) row.classList.add("show-notes");
+
+          const priorityLabel = item.priority === "high" ? "High" : item.priority === "medium" ? "Medium" : "Standard";
+          const priorityClass = item.priority === "high" ? "high" : item.priority === "medium" ? "medium" : "";
+
+          row.innerHTML = `
+            <input class="check" type="checkbox" aria-label="Complete ${item.title}" ${itemState.done ? "checked" : ""} />
+            <div>
+              <h3 class="item-title">${item.title}</h3>
+              <p class="item-desc">${item.desc}</p>
+              <div class="chips">
+                <span class="chip ${priorityClass}">${priorityLabel} priority</span>
+                ${item.tags.map(tag => `<span class="chip ${tag === "Solar" ? "solar" : ""}">${tag}</span>`).join("")}
+              </div>
+            </div>
+            <select class="owner" aria-label="Owner for ${item.title}">
+              <option value="">Owner</option>
+              <option value="Dean">Dean</option>
+              <option value="Fabian">Fabian</option>
+              <option value="Lawyer">Lawyer</option>
+              <option value="Accountant">Accountant</option>
+              <option value="Shopify Dev">Shopify Dev</option>
+            </select>
+            <select class="status" aria-label="Status for ${item.title}">
+              <option value="not-started">Not started</option>
+              <option value="in-progress">In progress</option>
+              <option value="review">Needs review</option>
+              <option value="done">Done</option>
+            </select>
+            <div class="notes">
+              <textarea placeholder="Notes, links, drafts, missing info...">${escapeHtml(itemState.notes || "")}</textarea>
+            </div>
+          `;
+
+          const check = row.querySelector(".check");
+          const owner = row.querySelector(".owner");
+          const status = row.querySelector(".status");
+          const notes = row.querySelector("textarea");
+
+          owner.value = itemState.owner || "";
+          status.value = itemState.status || "not-started";
+
+          check.addEventListener("change", () => {
+            itemState.done = check.checked;
+            if (check.checked) {
+              itemState.status = "done";
+              status.value = "done";
+              row.dataset.status = "done";
+              row.classList.add("done");
+            } else {
+              itemState.status = "in-progress";
+              status.value = "in-progress";
+              row.dataset.status = "in-progress";
+              row.classList.remove("done");
+            }
+            save();
+            applyFilters();
+          });
+
+          owner.addEventListener("change", () => {
+            itemState.owner = owner.value;
+            save();
+          });
+
+          status.addEventListener("change", () => {
+            itemState.status = status.value;
+            row.dataset.status = status.value;
+            itemState.done = status.value === "done";
+            check.checked = itemState.done;
+            row.classList.toggle("done", itemState.done);
+            save();
+            applyFilters();
+          });
+
+          notes.addEventListener("input", () => {
+            itemState.notes = notes.value;
+            save();
+          });
+
+          items.appendChild(row);
+        });
+
+        section.appendChild(head);
+        section.appendChild(items);
+        checklist.appendChild(section);
+      });
+
+      save();
+      applyFilters();
+    }
+
+    function updateProgress() {
+      const ids = checklistData.flatMap(group => group.items.map(item => item.id));
+      const total = ids.length;
+      const done = ids.filter(id => ensureItem(id).done).length;
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      doneCount.textContent = done;
+      totalCount.textContent = total;
+      progressBar.style.width = pct + "%";
+      progressText.textContent = pct + "% complete";
+    }
+
+    function applyFilters() {
+      const q = searchBox.value.trim().toLowerCase();
+      const status = filterStatus.value;
+      const priority = filterPriority.value;
+
+      document.querySelectorAll(".item").forEach(row => {
+        const matchesSearch = !q || row.dataset.search.includes(q);
+        const matchesStatus = status === "all" || row.dataset.status === status;
+        const matchesPriority = priority === "all" || row.dataset.priority === priority;
+        row.style.display = matchesSearch && matchesStatus && matchesPriority ? "" : "none";
+      });
+
+      document.querySelectorAll(".section").forEach(section => {
+        const visibleItems = [...section.querySelectorAll(".item")].filter(item => item.style.display !== "none");
+        section.style.display = visibleItems.length ? "" : "none";
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    searchBox.addEventListener("input", applyFilters);
+    filterStatus.addEventListener("change", applyFilters);
+    filterPriority.addEventListener("change", applyFilters);
+
+    expandNotesBtn.addEventListener("click", () => {
+      notesOpen = !notesOpen;
+      document.querySelectorAll(".item").forEach(row => row.classList.toggle("show-notes", notesOpen));
+      expandNotesBtn.textContent = notesOpen ? "Hide Notes" : "Show Notes";
+    });
+
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("Reset checklist progress in this browser?")) return;
+      localStorage.removeItem(stateKey);
+      location.reload();
+    });
+
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      const payload = {
+        exported_at: new Date().toISOString(),
+        checklist: state
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "solar-meister-legal-checklist-progress.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    render();
+  </script>
+</body>
+</html>
