@@ -85,7 +85,8 @@
       font-weight: 800;
     }
 
-    .topnav a:hover {
+    .topnav a:hover,
+    .topnav a[aria-current="page"] {
       color: var(--slate);
       border-color: rgba(93, 177, 63, 0.36);
       background: rgba(93, 177, 63, 0.06);
@@ -510,7 +511,8 @@
       <div class="topnav">
         <a href="../index.html">Logos</a>
         <a href="../index.html#brand">Brand basics</a>
-        <a href="./index.html">Favicons</a>
+        <a href="./index.html" aria-current="page">Favicons</a>
+        <a href="../onesheets/">One Sheets</a>
       </div>
     </nav>
 
