@@ -100,6 +100,14 @@
       text-decoration: none;
       font-size: 13px;
       font-weight: 800;
+      transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .topnav a:hover,
+    .topnav a[aria-current="page"] {
+      color: var(--green-dark);
+      border-color: rgba(93, 177, 63, 0.36);
+      background: rgba(93, 177, 63, 0.09);
     }
 
     .hero {
@@ -512,7 +520,8 @@
       <div class="topnav">
         <a href="#logos">Logos</a>
         <a href="#brand">Brand basics</a>
-        <a href="https://elettro.github.io/solarmeister/favicon/index.html">Favicons</a>
+        <a href="favicon/">Favicons</a>
+        <a href="onesheets/">One Sheets</a>
       </div>
     </nav>
 
