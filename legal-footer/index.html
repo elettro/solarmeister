@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Solar Meister Footer Mockups</title>
+<style>
+  :root{
+    --ink:#172019;
+    --muted:#66706a;
+    --line:#dce3dd;
+    --paper:#f7f9f7;
+    --white:#ffffff;
+    --green:#237a45;
+    --green-dark:#123d26;
+    --lime:#dff4c8;
+    --sand:#f6ead7;
+    --blue:#e8f2f4;
+    --yellow:#fff3c4;
+    --lav:#ece8f6;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--ink);
+    background:#eef2ee;
+  }
+  .page-header{
+    padding:34px 24px 20px;
+    background:var(--white);
+    border-bottom:1px solid var(--line);
+  }
+  .page-header h1{margin:0 0 8px;font-size:30px}
+  .page-header p{margin:0;color:var(--muted);font-size:15px}
+  .wrap{max-width:1500px;margin:0 auto;padding:28px 18px 60px}
+  .concept{
+    margin:0 0 34px;
+    border:1px solid #cfd8d0;
+    background:var(--white);
+    box-shadow:0 8px 24px rgba(25,45,30,.07);
+  }
+  .concept-label{
+    padding:12px 16px;
+    font-weight:700;
+    font-size:15px;
+    border-bottom:1px solid var(--line);
+    background:#f1f5f1;
+  }
+  .footer{
+    padding:30px;
+  }
+  .brand{
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:.2px;
+  }
+  .tagline{margin-top:6px;color:var(--muted);font-size:14px}
+  .group-title{
+    font-size:13px;
+    line-height:1.25;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    font-weight:800;
+    margin:0 0 10px;
+  }
+  .item{
+    display:block;
+    font-size:14px;
+    line-height:1.45;
+    margin:0 0 7px;
+  }
+  .contact{
+    font-size:14px;
+    line-height:1.65;
+  }
+  .contact strong{display:block;margin-bottom:6px}
+  .bottom{
+    margin-top:24px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  /* 1 */
+  .f1{background:#fff}
+  .f1-grid{display:grid;grid-template-columns:1.15fr repeat(3,1fr);gap:28px}
+  .f1 .group:nth-child(5),.f1 .group:nth-child(6){margin-top:22px}
+
+  /* 2 */
+  .f2{background:var(--green-dark);color:white}
+  .f2 .tagline,.f2 .bottom{color:#cfe3d4}
+  .f2 .bottom{border-color:rgba(255,255,255,.2)}
+  .f2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .f2-card{border:1px solid rgba(255,255,255,.18);padding:18px;border-radius:10px;background:rgba(255,255,255,.04)}
+  .f2 .group-title{color:#c8f3d2}
+  .f2-contact{grid-column:1/-1;display:grid;grid-template-columns:1fr 2fr;gap:24px;padding-top:4px}
+
+  /* 3 */
+  .f3{background:#fbfcfb}
+  .f3-top{display:grid;grid-template-columns:280px 1fr;gap:30px}
+  .f3-rail{border-right:3px solid var(--green);padding-right:24px}
+  .f3-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:0 34px}
+  .f3-group{padding:14px 0;border-bottom:1px solid var(--line)}
+
+  /* 4 */
+  .f4{background:#fff}
+  .f4 .brand{text-align:center}
+  .f4 .tagline{text-align:center}
+  .f4-row{margin-top:24px}
+  .f4-group{display:grid;grid-template-columns:260px 1fr;gap:20px;padding:13px 0;border-top:1px solid var(--line)}
+  .f4-items{display:flex;flex-wrap:wrap;gap:8px 18px}
+  .f4 .item{margin:0}
+  .f4-contact{margin-top:20px;padding:18px;background:var(--paper);text-align:center}
+
+  /* 5 */
+  .f5{background:#fffdf8}
+  .f5-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .f5-box{padding:16px;border:1px solid #e5ddcf;border-radius:8px;min-height:220px}
+  .f5-box:nth-child(1){background:var(--lav)}
+  .f5-box:nth-child(2){background:var(--blue)}
+  .f5-box:nth-child(3){background:var(--sand)}
+  .f5-box:nth-child(4){background:var(--yellow)}
+  .f5-box:nth-child(5){background:#eef1f7}
+  .f5-box:nth-child(6){background:var(--lime)}
+  .f5-contact{display:grid;grid-template-columns:1fr 2fr;gap:30px;margin-top:18px;padding-top:18px;border-top:1px solid #e5ddcf}
+
+  /* 6 */
+  .f6{background:#101411;color:white}
+  .f6-header{display:flex;justify-content:space-between;gap:30px;align-items:flex-start;padding-bottom:22px;border-bottom:1px solid #39413b}
+  .f6 .tagline,.f6 .bottom{color:#abb6ae}
+  .f6 .bottom{border-color:#39413b}
+  .f6-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px;margin-top:10px}
+  .f6-group{padding:18px 0;border-bottom:1px solid #2b312d}
+  .f6 .group-title{color:#9be3ad}
+
+  /* 7 */
+  .f7{background:#fff}
+  .f7-main{display:grid;grid-template-columns:1fr 320px;gap:28px}
+  .f7-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .f7-group{padding-left:14px;border-left:4px solid #b9d7c1}
+  .f7-contact{background:var(--green);color:#fff;padding:22px;border-radius:12px}
+  .f7-contact .tagline{color:#d9f1df}
+
+  /* 8 */
+  .f8{background:#f8faf8}
+  .f8-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+  .f8-contactbox{padding:16px;background:#fff;border:1px solid var(--line)}
+  .f8-groups{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .f8-group{display:grid;grid-template-columns:220px 1fr;gap:16px;background:#fff;border:1px solid var(--line);padding:16px}
+  .f8-items{columns:2;column-gap:20px}
+
+  /* 9 */
+  .f9{background:#fff}
+  .f9-head{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding-bottom:20px}
+  .f9-groups{border-top:3px solid var(--ink)}
+  .f9-group{display:grid;grid-template-columns:300px 1fr;gap:18px;padding:15px 0;border-bottom:1px solid var(--ink)}
+  .f9-items{display:grid;grid-template-columns:repeat(2,1fr);gap:0 20px}
+  .f9 .group-title{font-size:14px;text-transform:none;letter-spacing:0}
+
+  /* 10 */
+  .f10{background:linear-gradient(180deg,#eff8f1,#ffffff)}
+  .f10-shell{border:1px solid #bdd3c2;border-radius:18px;overflow:hidden;background:#fff}
+  .f10-top{padding:22px;background:#dff1e3;display:grid;grid-template-columns:1fr 2fr;gap:26px}
+  .f10-grid{padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .f10-group{padding:16px;border:1px solid var(--line);border-radius:12px}
+  .f10 .group-title{padding-bottom:8px;border-bottom:2px solid #d5e6d9}
+  .f10 .bottom{margin:0;padding:15px 20px;background:#f8faf8}
+
+  @media (max-width:1100px){
+    .f1-grid,.f2-grid,.f5-grid,.f6-groups,.f7-groups,.f10-grid{grid-template-columns:repeat(2,1fr)}
+    .f5-contact,.f2-contact,.f10-top{grid-template-columns:1fr}
+    .f7-main{grid-template-columns:1fr}
+    .f8-group{grid-template-columns:1fr}
+  }
+  @media (max-width:720px){
+    .footer{padding:22px 18px}
+    .f1-grid,.f2-grid,.f3-top,.f3-groups,.f5-grid,.f6-groups,.f7-groups,.f8-bar,.f8-groups,.f9-head,.f10-grid{grid-template-columns:1fr}
+    .f3-rail{border-right:0;border-bottom:3px solid var(--green);padding:0 0 18px}
+    .f4-group,.f9-group{grid-template-columns:1fr}
+    .f8-items{columns:1}
+    .f6-header{display:block}
+  }
+</style>
+</head>
+<body>
+<header class="page-header">
+  <h1>Solar Meister Shopify Legal Footer Mockups</h1>
+  <p>Ten text-only layouts. All section headings remain in English. No text links are active.</p>
+</header>
+
+<main class="wrap">
+
+<!-- Reusable content is intentionally repeated so each concept is standalone and easy to copy into Shopify. -->
+
+<section class="concept">
+<div class="concept-label">Option 1. Classic Multi-Column Footer</div>
+<footer class="footer f1">
+  <div class="f1-grid">
+    <div>
+      <div class="brand">Solar Meister</div>
+      <div class="tagline">Die Zukunft deiner Energie beginnt hier.</div>
+      <div class="contact" style="margin-top:22px">
+        <strong>Kontakt</strong>
+        support@Solar-Meister.de<br>
+        +49 1525 9725120<br>
+        Gutenbergring 63<br>
+        22848 Norderstedt<br>
+        Deutschland
+      </div>
+    </div>
+    <div>
+      <div class="group">
+        <div class="group-title">Core German Legal Pages</div>
+        <span class="item">Impressum</span>
+        <span class="item">Datenschutzerklärung</span>
+        <span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span>
+        <span class="item">Allgemeine Geschäftsbedingungen</span>
+      </div>
+      <div class="group">
+        <div class="group-title">Trust and Future Compliance</div>
+        <span class="item">Barrierefreiheit</span>
+        <span class="item">Über uns</span>
+      </div>
+    </div>
+    <div>
+      <div class="group">
+        <div class="group-title">Consumer Rights and Returns</div>
+        <span class="item">Widerrufsbelehrung</span>
+        <span class="item">Muster-Widerrufsformular</span>
+        <span class="item">Widerrufsbutton Page / Function</span>
+        <span class="item">Rückgabe &amp; Reklamation</span>
+      </div>
+      <div class="group">
+        <div class="group-title">Product Safety and Liability Control</div>
+        <span class="item">Produktsicherheit / GPSR</span>
+        <span class="item">Montage- und Installationshinweise</span>
+        <span class="item">Gewährleistung &amp; Garantie</span>
+      </div>
+    </div>
+    <div>
+      <div class="group">
+        <div class="group-title">Shop Operations</div>
+        <span class="item">Versand &amp; Lieferung</span>
+        <span class="item">Zahlungsarten</span>
+        <span class="item">Kontakt</span>
+        <span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span>
+      </div>
+      <div class="group">
+        <div class="group-title">Solar-Specific Compliance</div>
+        <span class="item">0% MwSt. Photovoltaik</span>
+        <span class="item">Elektrogeräte-Rücknahme / WEEE</span>
+        <span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span>
+        <span class="item">Verpackungsgesetz / LUCID</span>
+      </div>
+    </div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 2. Dark Premium Card Footer</div>
+<footer class="footer f2">
+  <div class="f2-grid">
+    <div class="f2-card">
+      <div class="group-title">Core German Legal Pages</div>
+      <span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span>
+    </div>
+    <div class="f2-card">
+      <div class="group-title">Consumer Rights and Returns</div>
+      <span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span>
+    </div>
+    <div class="f2-card">
+      <div class="group-title">Shop Operations</div>
+      <span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span>
+    </div>
+    <div class="f2-card">
+      <div class="group-title">Solar-Specific Compliance</div>
+      <span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span>
+    </div>
+    <div class="f2-card">
+      <div class="group-title">Product Safety and Liability Control</div>
+      <span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span>
+    </div>
+    <div class="f2-card">
+      <div class="group-title">Trust and Future Compliance</div>
+      <span class="item">Barrierefreiheit</span><span class="item">Über uns</span>
+    </div>
+  </div>
+  <div class="f2-contact">
+    <div><div class="brand">Solar Meister</div><div class="tagline">Die Zukunft deiner Energie beginnt hier.</div></div>
+    <div class="contact"><strong>Kontakt</strong>support@Solar-Meister.de · +49 1525 9725120 · Gutenbergring 63, 22848 Norderstedt, Deutschland</div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 3. Left Contact Rail</div>
+<footer class="footer f3">
+  <div class="f3-top">
+    <aside class="f3-rail">
+      <div class="brand">Solar Meister</div>
+      <div class="tagline">Die Zukunft deiner Energie beginnt hier.</div>
+      <div class="contact" style="margin-top:20px">
+        <strong>Kontakt</strong>
+        support@Solar-Meister.de<br>+49 1525 9725120<br>Gutenbergring 63<br>22848 Norderstedt<br>Deutschland
+      </div>
+    </aside>
+    <div class="f3-groups">
+      <div class="f3-group"><div class="group-title">Core German Legal Pages</div><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div>
+      <div class="f3-group"><div class="group-title">Consumer Rights and Returns</div><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div>
+      <div class="f3-group"><div class="group-title">Shop Operations</div><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div>
+      <div class="f3-group"><div class="group-title">Solar-Specific Compliance</div><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div>
+      <div class="f3-group"><div class="group-title">Product Safety and Liability Control</div><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div>
+      <div class="f3-group"><div class="group-title">Trust and Future Compliance</div><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div>
+    </div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 4. Horizontal Legal Directory</div>
+<footer class="footer f4">
+  <div class="brand">Solar Meister</div>
+  <div class="tagline">Die Zukunft deiner Energie beginnt hier.</div>
+  <div class="f4-row">
+    <div class="f4-group"><div class="group-title">Core German Legal Pages</div><div class="f4-items"><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div></div>
+    <div class="f4-group"><div class="group-title">Consumer Rights and Returns</div><div class="f4-items"><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div></div>
+    <div class="f4-group"><div class="group-title">Shop Operations</div><div class="f4-items"><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div></div>
+    <div class="f4-group"><div class="group-title">Solar-Specific Compliance</div><div class="f4-items"><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div></div>
+    <div class="f4-group"><div class="group-title">Product Safety and Liability Control</div><div class="f4-items"><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div></div>
+    <div class="f4-group"><div class="group-title">Trust and Future Compliance</div><div class="f4-items"><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div></div>
+  </div>
+  <div class="f4-contact contact"><strong>Kontakt</strong>support@Solar-Meister.de · +49 1525 9725120 · Gutenbergring 63, 22848 Norderstedt, Deutschland</div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 5. Color-Coded Compliance Blocks</div>
+<footer class="footer f5">
+  <div class="f5-grid">
+    <div class="f5-box"><div class="group-title">Core German Legal Pages</div><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div>
+    <div class="f5-box"><div class="group-title">Consumer Rights and Returns</div><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div>
+    <div class="f5-box"><div class="group-title">Shop Operations</div><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div>
+    <div class="f5-box"><div class="group-title">Solar-Specific Compliance</div><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div>
+    <div class="f5-box"><div class="group-title">Product Safety and Liability Control</div><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div>
+    <div class="f5-box"><div class="group-title">Trust and Future Compliance</div><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div>
+  </div>
+  <div class="f5-contact">
+    <div><div class="brand">Solar Meister</div><div class="tagline">Die Zukunft deiner Energie beginnt hier.</div></div>
+    <div class="contact"><strong>Kontakt</strong>support@Solar-Meister.de · +49 1525 9725120 · Gutenbergring 63, 22848 Norderstedt, Deutschland</div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 6. Editorial Black Footer</div>
+<footer class="footer f6">
+  <div class="f6-header">
+    <div><div class="brand">Solar Meister</div><div class="tagline">Die Zukunft deiner Energie beginnt hier.</div></div>
+    <div class="contact"><strong>Kontakt</strong>support@Solar-Meister.de<br>+49 1525 9725120<br>Gutenbergring 63, 22848 Norderstedt, Deutschland</div>
+  </div>
+  <div class="f6-groups">
+    <div class="f6-group"><div class="group-title">Core German Legal Pages</div><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div>
+    <div class="f6-group"><div class="group-title">Consumer Rights and Returns</div><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div>
+    <div class="f6-group"><div class="group-title">Shop Operations</div><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div>
+    <div class="f6-group"><div class="group-title">Solar-Specific Compliance</div><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div>
+    <div class="f6-group"><div class="group-title">Product Safety and Liability Control</div><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div>
+    <div class="f6-group"><div class="group-title">Trust and Future Compliance</div><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 7. Legal Columns with Contact Card</div>
+<footer class="footer f7">
+  <div class="f7-main">
+    <div class="f7-groups">
+      <div class="f7-group"><div class="group-title">Core German Legal Pages</div><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div>
+      <div class="f7-group"><div class="group-title">Consumer Rights and Returns</div><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div>
+      <div class="f7-group"><div class="group-title">Shop Operations</div><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div>
+      <div class="f7-group"><div class="group-title">Solar-Specific Compliance</div><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div>
+      <div class="f7-group"><div class="group-title">Product Safety and Liability Control</div><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div>
+      <div class="f7-group"><div class="group-title">Trust and Future Compliance</div><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div>
+    </div>
+    <aside class="f7-contact">
+      <div class="brand">Solar Meister</div>
+      <div class="tagline">Die Zukunft deiner Energie beginnt hier.</div>
+      <div class="contact" style="margin-top:22px"><strong>Kontakt</strong>support@Solar-Meister.de<br>+49 1525 9725120<br><br>Gutenbergring 63<br>22848 Norderstedt<br>Deutschland</div>
+    </aside>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 8. Structured Service Directory</div>
+<footer class="footer f8">
+  <div class="f8-bar">
+    <div class="f8-contactbox"><div class="brand">Solar Meister</div><div class="tagline">Die Zukunft deiner Energie beginnt hier.</div></div>
+    <div class="f8-contactbox contact"><strong>E-Mail und Telefon</strong>support@Solar-Meister.de<br>+49 1525 9725120</div>
+    <div class="f8-contactbox contact"><strong>Adresse</strong>Gutenbergring 63<br>22848 Norderstedt, Deutschland</div>
+  </div>
+  <div class="f8-groups">
+    <div class="f8-group"><div class="group-title">Core German Legal Pages</div><div class="f8-items"><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div></div>
+    <div class="f8-group"><div class="group-title">Consumer Rights and Returns</div><div class="f8-items"><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div></div>
+    <div class="f8-group"><div class="group-title">Shop Operations</div><div class="f8-items"><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div></div>
+    <div class="f8-group"><div class="group-title">Solar-Specific Compliance</div><div class="f8-items"><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div></div>
+    <div class="f8-group"><div class="group-title">Product Safety and Liability Control</div><div class="f8-items"><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div></div>
+    <div class="f8-group"><div class="group-title">Trust and Future Compliance</div><div class="f8-items"><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div></div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 9. Minimal Legal Index</div>
+<footer class="footer f9">
+  <div class="f9-head">
+    <div><div class="brand">Solar Meister</div><div class="tagline">Die Zukunft deiner Energie beginnt hier.</div></div>
+    <div class="contact"><strong>Kontakt</strong>support@Solar-Meister.de · +49 1525 9725120<br>Gutenbergring 63, 22848 Norderstedt, Deutschland</div>
+  </div>
+  <div class="f9-groups">
+    <div class="f9-group"><div class="group-title">Core German Legal Pages</div><div class="f9-items"><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div></div>
+    <div class="f9-group"><div class="group-title">Consumer Rights and Returns</div><div class="f9-items"><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div></div>
+    <div class="f9-group"><div class="group-title">Shop Operations</div><div class="f9-items"><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div></div>
+    <div class="f9-group"><div class="group-title">Solar-Specific Compliance</div><div class="f9-items"><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div></div>
+    <div class="f9-group"><div class="group-title">Product Safety and Liability Control</div><div class="f9-items"><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div></div>
+    <div class="f9-group"><div class="group-title">Trust and Future Compliance</div><div class="f9-items"><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div></div>
+  </div>
+  <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+</footer>
+</section>
+
+<section class="concept">
+<div class="concept-label">Option 10. Rounded Shopify Mega Footer</div>
+<footer class="footer f10">
+  <div class="f10-shell">
+    <div class="f10-top">
+      <div><div class="brand">Solar Meister</div><div class="tagline">Die Zukunft deiner Energie beginnt hier.</div></div>
+      <div class="contact"><strong>Kontakt</strong>support@Solar-Meister.de · +49 1525 9725120<br>Gutenbergring 63, 22848 Norderstedt, Deutschland</div>
+    </div>
+    <div class="f10-grid">
+      <div class="f10-group"><div class="group-title">Core German Legal Pages</div><span class="item">Impressum</span><span class="item">Datenschutzerklärung</span><span class="item">Cookie-Richtlinie / Cookie-Einstellungen</span><span class="item">Allgemeine Geschäftsbedingungen</span></div>
+      <div class="f10-group"><div class="group-title">Consumer Rights and Returns</div><span class="item">Widerrufsbelehrung</span><span class="item">Muster-Widerrufsformular</span><span class="item">Widerrufsbutton Page / Function</span><span class="item">Rückgabe &amp; Reklamation</span></div>
+      <div class="f10-group"><div class="group-title">Shop Operations</div><span class="item">Versand &amp; Lieferung</span><span class="item">Zahlungsarten</span><span class="item">Kontakt</span><span class="item">Streitbeilegung / Verbraucherstreitbeilegung</span></div>
+      <div class="f10-group"><div class="group-title">Solar-Specific Compliance</div><span class="item">0% MwSt. Photovoltaik</span><span class="item">Elektrogeräte-Rücknahme / WEEE</span><span class="item">Batterie-Rücknahme &amp; Batterieentsorgung</span><span class="item">Verpackungsgesetz / LUCID</span></div>
+      <div class="f10-group"><div class="group-title">Product Safety and Liability Control</div><span class="item">Produktsicherheit / GPSR</span><span class="item">Montage- und Installationshinweise</span><span class="item">Gewährleistung &amp; Garantie</span></div>
+      <div class="f10-group"><div class="group-title">Trust and Future Compliance</div><span class="item">Barrierefreiheit</span><span class="item">Über uns</span></div>
+    </div>
+    <div class="bottom">© Solar Meister. Alle Rechte vorbehalten.</div>
+  </div>
+</footer>
+</section>
+
+</main>
+</body>
+</html>
