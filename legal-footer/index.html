@@ -26,6 +26,46 @@
     color:var(--ink);
     background:#eef2ee;
   }
+
+  .topbar{
+    max-width:1500px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:18px 18px 0;
+  }
+  .brand-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:var(--ink);
+    text-decoration:none;
+    font-weight:900;
+    letter-spacing:-.03em;
+  }
+  .brand-mark{display:inline-flex;gap:4px;transform:skewX(-23deg)}
+  .brand-mark span{display:block;width:7px;height:17px;border-radius:2px;background:var(--green)}
+  .topnav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .topnav a{
+    display:inline-flex;
+    align-items:center;
+    height:34px;
+    padding:0 13px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--white);
+    color:var(--muted);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:800;
+  }
+  .topnav a:hover,.topnav a[aria-current="page"]{
+    color:var(--green-dark);
+    border-color:rgba(35,122,69,.36);
+    background:rgba(35,122,69,.08);
+  }
   .page-header{
     padding:34px 24px 20px;
     background:var(--white);
@@ -185,6 +225,19 @@
 </style>
 </head>
 <body>
+<nav class="topbar" aria-label="SolarMeister brand navigation">
+  <a class="brand-chip" href="../index.html">
+    <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+    <strong>SolarMeister Brand Home</strong>
+  </a>
+  <div class="topnav">
+    <a href="../index.html">Logos</a>
+    <a href="../index.html#brand">Brand basics</a>
+    <a href="../favicon/">Favicons</a>
+    <a href="../onesheets/">One Sheets</a>
+    <a href="./" aria-current="page">Legal Footer</a>
+  </div>
+</nav>
 <header class="page-header">
   <h1>Solar Meister Shopify Legal Footer Mockups</h1>
   <p>Ten text-only layouts. All section headings remain in English. No text links are active.</p>
