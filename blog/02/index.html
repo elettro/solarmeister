@@ -1,53 +1,238 @@
+<!-- Meta: Was kostet eine Solaranlage wirklich? Der Überblick über Module, Wechselrichter, Unterkonstruktion, Speicher und Installationskosten mit echten Beispielpreisen. -->
 <!DOCTYPE html>
-<html lang="de" id="html-root">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Was kostet eine Solaranlage wirklich? Der Überblick über Module, Wechselrichter, Unterkonstruktion, Speicher und Installationskosten mit echten Beispielpreisen.">
 <title>Was ist in den Kosten einer Solaranlage enthalten?</title>
 <style>
-:root{--green:#5DB13F;--green-dark:#4a8f32;--ink:#1A2530;--sand:#FAF9F5;--white:#fff;--line:#E4E0D6;--muted:#5C6672}*{box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.65;max-width:760px;margin:auto;padding:0 20px 60px}h1{font-size:clamp(26px,4vw,36px);line-height:1.2;margin:0 0 18px}h2{font-size:22px;margin:36px 0 12px}h3{font-size:17px;margin:24px 0 8px}p{font-size:15.5px;margin:0 0 14px;color:#333d47}a{color:var(--green-dark)}.summary,.callout{background:var(--sand);border-left:3px solid var(--green);padding:16px 20px;border-radius:8px;margin:0 0 28px}.callout{font-size:14px;margin:20px 0}.toc,.costviz{background:var(--sand);border-radius:12px;padding:18px 22px;margin:0 0 30px}.lbl,.dtitle{font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--green-dark);margin-bottom:8px}.toc ol{margin:0;padding-left:20px;font-size:14px}.spec{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px}.spec th{background:var(--ink);color:#fff;text-align:left}.spec th,.spec td{padding:10px 12px}.spec td{border-bottom:1px solid var(--line)}.spec tr:nth-child(even) td{background:var(--sand)}.imgph,.pimg{background:linear-gradient(135deg,#e9e5d8,#dcd6c4);border-radius:10px}.imgph{height:220px;display:grid;place-items:center;color:#9a927f;font-size:12.5px;text-transform:uppercase;text-align:center;padding:20px;margin:20px 0}.langbar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 0;margin-bottom:24px;display:flex;justify-content:flex-end;z-index:10}.langtoggle{display:flex;background:var(--sand);border-radius:999px;padding:3px}.langtoggle button{border:0;background:transparent;color:var(--muted);font-weight:700;padding:6px 16px;border-radius:999px;cursor:pointer}.langtoggle button.active{background:var(--green);color:var(--ink)}.lang-en{display:none}body.lang-en .lang-de{display:none}body.lang-en .lang-en{display:block}.verdicts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.verdict{font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:999px}.ok{background:#E5F2DF;color:var(--green-dark)}.warn{background:#F6E7E2;color:#B3452C}.costbar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin:14px 0}.costbar span{height:100%}.costlegend{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12.5px}.costlegend b{float:right}.checklist{list-style:none;padding:0}.checklist li{padding:9px 0 9px 32px;border-bottom:1px solid var(--line);position:relative}.checklist li:before{content:'✓';position:absolute;left:0;background:#E5F2DF;color:var(--green-dark);width:20px;height:20px;border-radius:50%;text-align:center;font-weight:800}.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}.pcard{border:1.5px solid var(--line);border-radius:12px;padding:16px}.pcard.rec{border-color:var(--green)}.pimg{height:110px;margin-bottom:10px}.pname{font-weight:700;font-size:13.5px;min-height:42px}.pspecs,.vat{font-size:11.5px;color:var(--muted)}.pprice{font-weight:800;font-size:17px;margin:10px 0}.vat{display:block;font-weight:400}.pbtn{display:block;text-align:center;background:var(--sand);color:var(--ink);font-weight:700;padding:9px;border-radius:7px;text-decoration:none}.rec .pbtn{background:var(--green)}.faq-item{border-bottom:1px solid var(--line);padding:14px 0}.faq-item h3{margin:0 0 6px;font-size:15px}.faq-item p{margin:0;font-size:14px;color:var(--muted)}.cta{background:var(--ink);color:#fff;border-radius:12px;padding:24px;text-align:center;margin:36px 0}.cta p{color:#c9d1d9}.btn{display:inline-block;background:var(--green);color:var(--ink);font-weight:700;padding:11px 22px;border-radius:8px;text-decoration:none}@media(max-width:560px){.pgrid,.costlegend{grid-template-columns:1fr}.spec{display:block;overflow-x:auto}}
+  :root{
+    --green:#5DB13F; --green-dark:#4a8f32; --ink:#1A2530; --sand:#FAF9F5; --white:#FFFFFF; --line:#E4E0D6; --muted:#5C6672;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);line-height:1.65;max-width:760px;margin:0 auto;padding:32px 20px 60px;background:var(--white);}
+  h1{font-size:clamp(26px,4vw,36px);line-height:1.2;margin:0 0 18px;color:var(--ink);}
+  h2{font-size:22px;margin:36px 0 12px;color:var(--ink);}
+  h3{font-size:17px;margin:24px 0 8px;color:var(--ink);}
+  p{font-size:15.5px;margin:0 0 14px;color:#333d47;}
+  a{color:var(--green-dark);}
+  .summary{background:var(--sand);border-left:3px solid var(--green);padding:16px 20px;border-radius:8px;font-size:15.5px;margin:0 0 28px;}
+  .toc{background:var(--sand);border-radius:10px;padding:18px 22px;margin:0 0 32px;}
+  .toc .lbl{font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--green-dark);margin-bottom:8px;}
+  .toc ol{margin:0;padding-left:20px;font-size:14px;}
+  .toc li{margin-bottom:4px;}
+  table.spec{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px;}
+  table.spec th{background:var(--ink);color:#fff;text-align:left;padding:10px 12px;font-weight:600;}
+  table.spec td{padding:10px 12px;border-bottom:1px solid var(--line);}
+  table.spec tr:last-child td{border-bottom:none;}
+  table.spec tr:nth-child(even) td{background:var(--sand);}
+  .callout{background:var(--sand);border-left:3px solid var(--green);border-radius:8px;padding:14px 18px;font-size:14px;margin:20px 0;}
+  .callout strong{color:var(--ink);}
+  ul.checklist{list-style:none;padding:0;margin:14px 0;}
+  ul.checklist li{padding:9px 0 9px 34px;position:relative;font-size:14.5px;border-bottom:1px solid var(--line);}
+  ul.checklist li:last-child{border-bottom:none;}
+  ul.checklist li::before{position:absolute;left:0;top:9px;width:20px;height:20px;border-radius:50%;font-size:12px;line-height:20px;text-align:center;font-weight:800;}
+  ul.checklist.yes li::before{content:"✓";background:#E5F2DF;color:var(--green-dark);}
+  .faq-item{border-bottom:1px solid var(--line);padding:14px 0;}
+  .faq-item h3{margin:0 0 6px;font-size:15px;}
+  .faq-item p{margin:0;font-size:14px;color:var(--muted);}
+  .cta{background:var(--ink);color:#fff;border-radius:12px;padding:24px;text-align:center;margin:36px 0 10px;}
+  .cta p{color:#c9d1d9;margin:0 0 14px;font-size:14px;}
+  .cta a.btn{display:inline-block;background:var(--green);color:var(--ink);font-weight:700;padding:11px 22px;border-radius:8px;text-decoration:none;font-size:14.5px;}
+  .imgph{background:linear-gradient(135deg,#e9e5d8,#dcd6c4);border-radius:10px;height:220px;display:flex;align-items:center;justify-content:center;color:#9a927f;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;margin:20px 0;text-align:center;padding:0 20px;}
+
+  .verdicts{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px;}
+  .verdict{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:6px 14px 6px 10px;border-radius:999px;}
+  .verdict.ok{background:#E5F2DF;color:var(--green-dark);}
+  .verdict.warn{background:#F6E7E2;color:#B3452C;}
+  .verdict .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+
+  .costviz{background:var(--sand);border-radius:14px;padding:22px 20px 20px;margin:0 0 30px;}
+  .costviz .dtitle{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .costbar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-bottom:14px;}
+  .costbar span{display:block;height:100%;}
+  .costlegend{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 16px;}
+  .costlegend .item{display:flex;align-items:center;gap:8px;font-size:12.5px;}
+  .costlegend .sw{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+  .costlegend .pct{margin-left:auto;font-weight:700;color:var(--ink);}
+  @media(max-width:520px){.costlegend{grid-template-columns:1fr;}}
+
+  .pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0 8px;}
+  .pcard{border:1.5px solid var(--line);border-radius:12px;padding:16px;position:relative;background:var(--white);}
+  .pcard.rec{border-color:var(--green);}
+  .pcard.rec .tag{position:absolute;top:-10px;left:14px;background:var(--green);color:var(--ink);font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;}
+  .pcard .pimg{background:linear-gradient(135deg,#e9e5d8,#dcd6c4);border-radius:8px;height:110px;margin-bottom:10px;}
+  .pcard .pname{font-weight:700;font-size:13.5px;line-height:1.35;margin-bottom:6px;min-height:36px;}
+  .pcard .pspecs{font-size:11.5px;color:var(--muted);margin-bottom:10px;line-height:1.5;}
+  .pcard .pprice{font-weight:800;font-size:17px;margin-bottom:10px;}
+  .pcard .pprice .vat{font-weight:400;font-size:10.5px;color:var(--muted);display:block;}
+  .pcard a.pbtn{display:block;text-align:center;background:var(--sand);color:var(--ink);font-weight:700;font-size:12.5px;padding:9px;border-radius:7px;text-decoration:none;}
+  .pcard.rec a.pbtn{background:var(--green);}
+  @media(max-width:560px){.pgrid{grid-template-columns:1fr;}}
 </style>
 </head>
-<body class="lang-de">
-<div class="langbar"><div class="langtoggle"><button id="btn-de" class="active" onclick="setLang('de')">DE</button><button id="btn-en" onclick="setLang('en')">EN</button></div></div>
-<h1 class="lang-de">Was ist in den Kosten einer Solaranlage enthalten?</h1><h1 class="lang-en">What's Included in Solar Installation Costs?</h1>
-<p class="summary lang-de">Die Gesamtkosten einer Solaranlage setzen sich aus fünf Blöcken zusammen: Module, Wechselrichter, Unterkonstruktion, optionaler Speicher und Installation. Bei einem Balkonkraftwerk zahlst du nur für Hardware, bei einer Dachanlage kommen Elektrikerkosten für den Netzanschluss hinzu – dank 0 % MwSt. sparst du aktuell in beiden Fällen 19 %.</p>
-<p class="summary lang-en">Total solar system costs break down into five parts: panels, inverter, mounting hardware, optional storage, and installation. With a balcony system, you only pay for hardware; with a rooftop system, electrician costs for the grid connection are added — and Germany's 0% VAT rule applies.</p>
-<div class="imgph lang-de">Solar-Komponenten: Modul, Wechselrichter, Kabel und Halterung</div><div class="imgph lang-en">Solar components: panel, inverter, cabling and mounting hardware</div>
-<div class="verdicts lang-de"><span class="verdict ok">● Balkonkraftwerk: reine Hardwarekosten</span><span class="verdict warn">● Dachanlage: + Elektrikerkosten</span></div><div class="verdicts lang-en"><span class="verdict ok">● Balcony system: hardware only</span><span class="verdict warn">● Rooftop system: + electrician</span></div>
-<div class="costviz"><div class="dtitle"><span class="lang-de">Typische Kostenverteilung einer Dachanlage</span><span class="lang-en">Typical rooftop system cost breakdown</span></div><div class="costbar"><span style="width:44%;background:#5DB13F"></span><span style="width:16%;background:#3F7F2C"></span><span style="width:13%;background:#1A2530"></span><span style="width:14%;background:#8A97A3"></span><span style="width:13%;background:#C9C2AC"></span></div><div class="costlegend" id="cost-legend"></div></div>
-<div class="toc lang-de"><div class="lbl">Inhalt</div><ol><li><a href="#module">Solarmodule</a></li><li><a href="#wechselrichter">Wechselrichter</a></li><li><a href="#unterkonstruktion">Unterkonstruktion und Zubehör</a></li><li><a href="#speicher">Speicher</a></li><li><a href="#installation">Installationskosten</a></li><li><a href="#mwst">0 % MwSt.</a></li><li><a href="#beispiele">Beispielrechnungen</a></li><li><a href="#produkte">Ausgewählte Komponenten</a></li><li><a href="#faq">Häufige Fragen</a></li></ol></div>
-<div class="toc lang-en"><div class="lbl">Contents</div><ol><li><a href="#module-en">Panels</a></li><li><a href="#wechselrichter-en">Inverters</a></li><li><a href="#unterkonstruktion-en">Mounting and accessories</a></li><li><a href="#speicher-en">Storage</a></li><li><a href="#installation-en">Installation costs</a></li><li><a href="#mwst-en">0% VAT</a></li><li><a href="#beispiele-en">Example pricing</a></li><li><a href="#produkte-en">Selected components</a></li><li><a href="#faq-en">FAQ</a></li></ol></div>
-<main class="lang-de">
-<h2 id="module">Solarmodule – der größte Kostenblock</h2><p>Module machen typischerweise rund 40–45 % der Gesamtkosten aus. Der Preis hängt von Zelltechnologie, Leistung und Markenqualität ab. Ein Aiko Neostar 2S mit 460 Wp liegt bei rund 110 € pro Stück; für ein 10-kWp-Dachset werden etwa 20 bis 25 Module benötigt.</p><div class="callout"><strong>Praxistipp:</strong> Vergleiche den Preis pro Watt-Peak (€/Wp), nicht nur den Stückpreis.</div>
-<h2 id="wechselrichter">Wechselrichter: Mikro vs. Hybrid</h2><p>Der Wechselrichter wandelt Gleichstrom in nutzbaren Wechselstrom um und macht etwa 15–16 % der Kosten aus. Balkonkraftwerke nutzen kompakte Mikrowechselrichter, größere Dachanlagen meist einen zentralen, speicherfähigen Hybrid-Wechselrichter.</p><table class="spec"><tr><th>Typ</th><th>Einsatzbereich</th><th>Preis ab</th></tr><tr><td>Mikrowechselrichter</td><td>Balkonkraftwerk (≤800 W)</td><td>ca. 119 €</td></tr><tr><td>Hybrid-Wechselrichter</td><td>Dachanlage</td><td>im Komplettset</td></tr></table>
-<h2 id="unterkonstruktion">Unterkonstruktion und Zubehör</h2><p>Montageschienen, Klemmen, Dachhaken sowie Kabel und Überspannungsschutz machen zusammen rund 25–27 % der Kosten aus.</p><ul class="checklist"><li>In Komplettsets: Unterkonstruktion passend zur Modulanzahl</li><li>Bei Einzelkomponenten: Montagesystem, Kabel und Stecker separat kalkulieren</li></ul>
-<h2 id="speicher">Speicher – lohnt sich der Aufpreis?</h2><p>Ein Batteriespeicher ist optional und erhöht den Eigenverbrauch. Der Anker SOLIX BP2700 mit 2,69 kWh kostet rund 569 €, die Solarbank 3 E2700 Pro rund 829 €. Größere Hausspeicher erhöhen den Gesamtpreis entsprechend.</p><div class="callout"><strong>Faustregel:</strong> Speicher lohnen sich besonders bei geringem Tages- und hohem Abendverbrauch.</div>
-<h2 id="installation">Installationskosten: Wann ein Elektriker nötig ist</h2><p>Ein Balkonkraftwerk bis 800 Watt kannst du selbst montieren und anschließen. Bei einer fest angeschlossenen Dachanlage ist für Netzanschluss und Abnahme ein eingetragener Elektriker nötig. Dafür fallen regional meist 800 bis 1.500 € an.</p>
-<h2 id="mwst">0 % MwSt. – was das für deine Kosten bedeutet</h2><p>Gemäß § 12 Abs. 3 UStG gilt für begünstigte Photovoltaik-Komponenten auf privaten Wohngebäuden ein Umsatzsteuersatz von 0 %. Der angegebene Preis ist daher bereits der Endpreis, sofern die Voraussetzungen erfüllt sind.</p>
-<h2 id="beispiele">Beispielrechnungen: 4 reale Sets im Vergleich</h2><div id="sets-de"></div>
-<h2 id="produkte">Ausgewählte Komponenten</h2><p>Reale Beispiele aus unserem Sortiment für jeden Kostenblock.</p><div class="pgrid" id="products-de"></div>
-<h2 id="faq">Häufige Fragen</h2><div id="faq-de"></div><div class="cta"><p>Bereit, deine eigene Anlage zusammenzustellen?</p><a class="btn" href="https://solarmeister-shop.de/collections/komplettsets">Komplettsets ansehen</a></div>
-</main>
-<main class="lang-en">
-<h2 id="module-en">Panels – the biggest cost block</h2><p>Panels typically account for 40–45% of total cost. Price depends on cell technology, output, and brand quality. An Aiko Neostar 2S 460 Wp panel costs around €110; a 10 kWp rooftop set needs about 20 to 25 panels.</p><div class="callout"><strong>Tip:</strong> Compare price per watt-peak (€/Wp), not just per-unit price.</div>
-<h2 id="wechselrichter-en">Inverter: micro vs. hybrid</h2><p>The inverter converts DC into usable AC and accounts for roughly 15–16% of cost. Balcony systems use microinverters; rooftop systems generally use a central, battery-ready hybrid inverter.</p><table class="spec"><tr><th>Type</th><th>Used for</th><th>Price from</th></tr><tr><td>Microinverter</td><td>Balcony system (≤800 W)</td><td>approx. €119</td></tr><tr><td>Hybrid inverter</td><td>Rooftop system</td><td>included in sets</td></tr></table>
-<h2 id="unterkonstruktion-en">Mounting and accessories</h2><p>Rails, clamps, roof hooks, cabling, and surge protection together account for roughly 25–27% of cost.</p><ul class="checklist"><li>Complete sets include mounting matched to panel count</li><li>For individual components, budget separately for mounting, cables, and connectors</li></ul>
-<h2 id="speicher-en">Storage – is the extra cost worth it?</h2><p>A battery is optional and raises self-consumption. The 2.69 kWh Anker SOLIX BP2700 costs around €569 and the Solarbank 3 E2700 Pro around €829. Larger home batteries add proportionally more.</p><div class="callout"><strong>Rule of thumb:</strong> Storage is most useful when electricity use is low by day and high in the evening.</div>
-<h2 id="installation-en">Installation costs: when you need an electrician</h2><p>You can mount and connect a balcony system up to 800 watts yourself. A permanently wired rooftop system needs a registered electrician for grid connection and sign-off, typically costing €800–1,500.</p>
-<h2 id="mwst-en">0% VAT – what it means for your costs</h2><p>Under § 12 Abs. 3 UStG, qualifying photovoltaic components for private homes carry a 0% VAT rate. Where the conditions are met, the displayed price is the final price.</p>
-<h2 id="beispiele-en">Example pricing: 4 real sets compared</h2><div id="sets-en"></div>
-<h2 id="produkte-en">Selected components</h2><p>Real examples from our range for every cost block.</p><div class="pgrid" id="products-en"></div>
-<h2 id="faq-en">Frequently asked questions</h2><div id="faq-en-list"></div><div class="cta"><p>Ready to put together your own system?</p><a class="btn" href="https://solarmeister-shop.de/collections/komplettsets">View complete sets</a></div>
-</main>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Was ist in den Kosten einer Solaranlage enthalten?","description":"Was kostet eine Solaranlage wirklich? Der Überblick über Module, Wechselrichter, Unterkonstruktion, Speicher und Installationskosten mit echten Beispielpreisen.","inLanguage":"de","author":{"@type":"Organization","name":"SolarMeister"},"publisher":{"@type":"Organization","name":"SolarMeister"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","inLanguage":"de","mainEntity":[{"@type":"Question","name":"Was kostet eine 10-kWp-Solaranlage insgesamt?","acceptedAnswer":{"@type":"Answer","text":"Ein 10-kWp-DIY-Dachset ohne Speicher kostet rund 3.999 €, mit 9,6-kWh-Speicher rund 7.699 €, jeweils zuzüglich Anschlusskosten."}},{"@type":"Question","name":"Sind Elektrikerkosten im Setpreis enthalten?","acceptedAnswer":{"@type":"Answer","text":"Nein, bei Dachanlagen sind die Kosten für den Netzanschluss separat zu kalkulieren."}}]}</script>
-<script>
-const sets=[['Balkonkraftwerk 800 Basic','870 Wp','Module + Mikrowechselrichter','319 €'],['5-kWp-DIY-Dachset','5 kWp','11 Module + Hybrid-Wechselrichter + Unterkonstruktion','2.399 €'],['10-kWp-DIY-Dachset','10 kWp','22 Module + Hybrid-Wechselrichter + Unterkonstruktion','3.999 €'],['10-kWp-Komplettset mit Speicher','10 kWp','22 Module + Wechselrichter + 9,6-kWh-Speicher','7.699 €']];function setTable(en){return `<table class="spec"><tr><th>${en?'Set':'Set'}</th><th>${en?'Output':'Leistung'}</th><th>${en?'Includes':'Enthalten'}</th><th>${en?'Price':'Preis'}</th></tr>${sets.map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${en?s[2].replace('Module','panels').replace('Mikrowechselrichter','microinverter').replace('Hybrid-Wechselrichter','hybrid inverter').replace('Unterkonstruktion','mounting').replace('Wechselrichter','inverter').replace('Speicher','storage'):s[2]}</td><td>${en?'€'+s[3].replace(' €','').replace('.' ,','):s[3]}</td></tr>`).join('')}</table>`}document.getElementById('sets-de').innerHTML=setTable(false);document.getElementById('sets-en').innerHTML=setTable(true);
-const products=[['Aiko Neostar 2S 460 Wp ABC Back-Contact','Premium-Modul, hoher Wirkungsgrad','109,90 €','aiko-neostar-2s-460-wp-abc-back-contact-premium'],['APsystems EZ1-M Mikrowechselrichter 800 W','Für Balkonkraftwerke bis 800 W','119 €','apsystems-ez1-m-mikrowechselrichter-800-w'],['Anker SOLIX Solarbank 3 E2700 Pro','2,69 kWh, eigenständiger Speicher','829 €','anker-solix-solarbank-3-e2700-pro-balkonkraftwerk-speicher-2-69-kwh'],['10-kWp-DIY-Dachset','22× 450 Wp, Hybrid-Wechselrichter und Unterkonstruktion','3.999 €','10-kwp-diy-dachset-22-450-wp-10-kw-hybrid-wechselrichter-unterkonstruktion']];function productCards(en){return products.map((p,i)=>`<div class="pcard ${i===0?'rec':''}"><div class="pimg"></div><div class="pname">${p[0]}</div><div class="pspecs">${p[1]}</div><div class="pprice">${en?'€'+p[2].replace(' €','').replace('.',',').replace(',','.'):p[2]}<span class="vat">${en?'incl. 0% VAT':'inkl. 0 % MwSt.'}</span></div><a class="pbtn" href="https://solarmeister-shop.de/products/${p[3]}">${en?'View':'Ansehen'}</a></div>`).join('')}document.getElementById('products-de').innerHTML=productCards(false);document.getElementById('products-en').innerHTML=productCards(true);
-const faqs=[['Was kostet eine 10-kWp-Solaranlage insgesamt?','Ein DIY-Set kostet rund 3.999 €, mit 9,6-kWh-Speicher rund 7.699 € – jeweils zzgl. Elektrikerkosten.','What does a 10 kWp solar system cost?','Around €3,999 without storage or €7,699 with a 9.6 kWh battery, plus electrician costs.'],['Ist die Unterkonstruktion enthalten?','DIY-Dachsets enthalten die passende Unterkonstruktion.','Is mounting hardware included?','DIY rooftop sets include matching mounting hardware.'],['Lohnt sich ein Hybrid-Wechselrichter?','Vor allem, wenn du später einen Speicher nachrüsten möchtest.','Is a hybrid inverter worth it?','Especially if you plan to add storage later.'],['Fällt Mehrwertsteuer an?','Für begünstigte PV-Komponenten gilt unter den gesetzlichen Voraussetzungen 0 % MwSt.','Does VAT apply?','Qualifying PV components carry 0% VAT where the legal conditions are met.'],['Sind Elektrikerkosten enthalten?','Nein, der Netzanschluss einer Dachanlage ist separat zu kalkulieren.','Are electrician costs included?','No, rooftop grid connection is budgeted separately.']];function faqCards(en){return faqs.map(f=>`<div class="faq-item"><h3>${f[en?2:0]}</h3><p>${f[en?3:1]}</p></div>`).join('')}document.getElementById('faq-de').innerHTML=faqCards(false);document.getElementById('faq-en-list').innerHTML=faqCards(true);
-function legend(){let en=document.body.classList.contains('lang-en'),a=en?[['Panels','44%'],['Inverter','16%'],['Electrician/connection','13%'],['Mounting','14%'],['Cabling & accessories','13%']]:[['Module','44 %'],['Wechselrichter','16 %'],['Elektriker/Anschluss','13 %'],['Unterkonstruktion','14 %'],['Kabel & Zubehör','13 %']];document.getElementById('cost-legend').innerHTML=a.map(x=>`<div>${x[0]} <b>${x[1]}</b></div>`).join('')}function setLang(l){document.body.classList.toggle('lang-en',l==='en');document.documentElement.lang=l;document.getElementById('btn-de').classList.toggle('active',l==='de');document.getElementById('btn-en').classList.toggle('active',l==='en');legend()}legend();
+<body>
+
+<h1>Was ist in den Kosten einer Solaranlage enthalten?</h1>
+
+<p class="summary">
+Die Gesamtkosten einer Solaranlage setzen sich aus fünf Blöcken zusammen: Module, Wechselrichter, Unterkonstruktion, optionaler Speicher und Installation. Bei einem Balkonkraftwerk zahlst du nur für Hardware, bei einer Dachanlage kommen Elektrikerkosten für den Netzanschluss hinzu – dank 0 % MwSt. sparst du aktuell in beiden Fällen 19 %.
+</p>
+
+<div class="imgph">[[BILD: Aufgeschlüsselte Solar-Komponenten auf einem Tisch – Modul, Wechselrichter, Kabel, Halterung]]</div>
+
+<div class="verdicts">
+  <span class="verdict ok"><span class="dot"></span>Balkonkraftwerk: reine Hardwarekosten</span>
+  <span class="verdict warn"><span class="dot"></span>Dachanlage: + Elektrikerkosten für Anschluss</span>
+</div>
+
+<div class="costviz">
+  <div class="dtitle">Typische Kostenverteilung einer Dachanlage</div>
+  <div class="costbar">
+    <span style="width:44%;background:#5DB13F;"></span>
+    <span style="width:16%;background:#3F7F2C;"></span>
+    <span style="width:13%;background:#1A2530;"></span>
+    <span style="width:14%;background:#8A97A3;"></span>
+    <span style="width:13%;background:#C9C2AC;"></span>
+  </div>
+  <div class="costlegend">
+    <div class="item"><span class="sw" style="background:#5DB13F;"></span>Module<span class="pct">44 %</span></div>
+    <div class="item"><span class="sw" style="background:#3F7F2C;"></span>Wechselrichter<span class="pct">16 %</span></div>
+    <div class="item"><span class="sw" style="background:#1A2530;"></span>Elektriker/Anschluss<span class="pct">13 %</span></div>
+    <div class="item"><span class="sw" style="background:#8A97A3;"></span>Unterkonstruktion<span class="pct">14 %</span></div>
+    <div class="item"><span class="sw" style="background:#C9C2AC;"></span>Kabel &amp; Zubehör<span class="pct">13 %</span></div>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="lbl">Inhalt</div>
+  <ol>
+    <li><a href="#module">Solarmodule – der größte Kostenblock</a></li>
+    <li><a href="#wechselrichter">Wechselrichter: Mikro vs. Hybrid</a></li>
+    <li><a href="#unterkonstruktion">Unterkonstruktion und Zubehör</a></li>
+    <li><a href="#speicher">Speicher – lohnt sich der Aufpreis?</a></li>
+    <li><a href="#installation">Installationskosten: Wann ein Elektriker nötig ist</a></li>
+    <li><a href="#mwst">0 % MwSt. – was das für deine Kosten bedeutet</a></li>
+    <li><a href="#beispiele">Beispielrechnungen: 4 reale Sets im Vergleich</a></li>
+    <li><a href="#produkte">Ausgewählte Komponenten</a></li>
+    <li><a href="#faq">Häufige Fragen</a></li>
+  </ol>
+</div>
+
+<h2 id="module">Solarmodule – der größte Kostenblock</h2>
+<p>Module machen typischerweise den größten Anteil an den Gesamtkosten aus – rund 40–45 %. Der Preis hängt von Zelltechnologie, Leistung pro Modul (Wp) und Markenqualität ab. Ein hochwertiges Premium-Modul wie das Aiko Neostar 2S mit 460 Wp Back-Contact-Technologie liegt bei rund 110 € pro Stück. Für ein 10-kWp-Dachset werden je nach Modulwahl 20 bis 25 Module benötigt.</p>
+<div class="callout"><strong>Praxistipp:</strong> Achte auf den Preis pro Watt-Peak (€/Wp), nicht nur auf den Stückpreis – so vergleichst du Module unterschiedlicher Leistung fair.</div>
+
+<h2 id="wechselrichter">Wechselrichter: Mikro vs. Hybrid</h2>
+<p>Der Wechselrichter wandelt den erzeugten Gleichstrom in nutzbaren Wechselstrom um und macht etwa 15–16 % der Gesamtkosten aus. Bei Balkonkraftwerken kommen kompakte Mikrowechselrichter zum Einsatz – etwa der APsystems EZ1-M mit 800 W für rund 119 €. Bei größeren Dachanlagen wird meist ein zentraler Hybrid-Wechselrichter verbaut, der auch einen Batteriespeicher einbinden kann; dieser ist bereits in den Komplettsets für 5-kWp- und 10-kWp-Anlagen enthalten.</p>
+<table class="spec">
+  <tr><th>Typ</th><th>Einsatzbereich</th><th>Preis ab</th></tr>
+  <tr><td>Mikrowechselrichter</td><td>Balkonkraftwerk (≤800 W)</td><td>ca. 119 €</td></tr>
+  <tr><td>Hybrid-Wechselrichter</td><td>Dachanlage mit optionalem Speicher</td><td>im Komplettset enthalten</td></tr>
+</table>
+
+<h2 id="unterkonstruktion">Unterkonstruktion und Zubehör</h2>
+<p>Unterkonstruktion (Montageschienen, Klemmen, Dachhaken oder Balkonhalterung) und elektrisches Zubehör wie Kabel und Überspannungsschutz machen zusammen rund 25–27 % der Kosten aus. Ein Beispiel: Ein AC-Überspannungsschutz Typ 2, 3-phasig kostet rund 65 € und schützt die Anlage vor Spannungsspitzen im Netz – bei größeren Dachanlagen empfehlenswert, bei Balkonkraftwerken meist nicht nötig.</p>
+<ul class="checklist yes">
+  <li>Bei Komplettsets bereits enthalten: Unterkonstruktion passend zur Modulanzahl</li>
+  <li>Bei Einzelkomponenten separat kalkulieren: Montagesystem, Kabel, Stecker</li>
+</ul>
+
+<h2 id="speicher">Speicher – lohnt sich der Aufpreis?</h2>
+<p>Ein Batteriespeicher ist optional, erhöht aber die Kosten spürbar – dafür steigt auch der Eigenverbrauchsanteil deutlich. Beispiele aus unserem Sortiment: Der Anker SOLIX BP2700 Erweiterungsakku mit 2,69 kWh kostet rund 569 €, die Anker SOLIX Solarbank 3 E2700 Pro als eigenständiger Balkonkraftwerk-Speicher mit 2,69 kWh rund 829 €. Bei Dachanlagen mit größerem Speicher – etwa dem in unserem 10-kWp-Komplettset enthaltenen Sungrow-System mit 9,6 kWh – steigt der Gesamtpreis entsprechend deutlicher.</p>
+<div class="callout"><strong>Faustregel:</strong> Ein Speicher lohnt sich vor allem, wenn du tagsüber wenig und abends viel Strom verbrauchst – er verschiebt deinen Eigenverbrauch in die Stunden ohne Sonne.</div>
+
+<h2 id="installation">Installationskosten: Wann ein Elektriker nötig ist</h2>
+<p>Bei einem Balkonkraftwerk bis 800 Watt entstehen keine Installationskosten durch eine Fachkraft – Montage und Anschluss über die Steckdose erledigst du komplett selbst. Bei einer fest angeschlossenen Dachanlage schreibt die VDE-Norm einen eingetragenen Elektriker für den Netzanschluss vor. Die Kosten dafür liegen je nach Region und Aufwand meist zwischen 800 und 1.500 € für die reine Anschluss- und Abnahmeleistung, bei zusätzlicher Speicher- oder Wallbox-Integration entsprechend höher.</p>
+
+<h2 id="mwst">0 % MwSt. – was das für deine Kosten bedeutet</h2>
+<p>Seit der Gesetzesänderung entfällt gemäß § 12 Abs. 3 UStG die Mehrwertsteuer auf Photovoltaik-Komponenten für private Wohngebäude vollständig. Das bedeutet: Der angegebene Preis ist bereits der Endpreis – du sparst dir die sonst üblichen 19 % gegenüber einer Anschaffung vor der Gesetzesänderung. Diese Ersparnis gilt für Module, Wechselrichter, Speicher und die dazugehörige Unterkonstruktion.</p>
+
+<h2 id="beispiele">Beispielrechnungen: 4 reale Sets im Vergleich</h2>
+<table class="spec">
+  <tr><th>Set</th><th>Leistung</th><th>Enthalten</th><th>Preis</th></tr>
+  <tr><td>Balkonkraftwerk 800 Basic</td><td>870 Wp</td><td>Module + Mikrowechselrichter</td><td>319 €</td></tr>
+  <tr><td>5-kWp-DIY-Dachset</td><td>5 kWp</td><td>11 Module + Hybrid-Wechselrichter + Unterkonstruktion</td><td>2.399 €</td></tr>
+  <tr><td>10-kWp-DIY-Dachset</td><td>10 kWp</td><td>22 Module + Hybrid-Wechselrichter + Unterkonstruktion</td><td>3.999 €</td></tr>
+  <tr><td>10-kWp-Komplettset mit Speicher</td><td>10 kWp</td><td>22 Module + Hybrid-Wechselrichter + 9,6-kWh-Speicher + UK</td><td>7.699 €</td></tr>
+</table>
+<p>Bei den beiden Dachsets kommen zusätzlich die bereits erwähnten Elektrikerkosten für den Netzanschluss hinzu, beim Balkonkraftwerk nicht.</p>
+
+<h2 id="produkte">Ausgewählte Komponenten</h2>
+<p>Reale Beispiele aus unserem Sortiment für jeden Kostenblock.</p>
+<div class="pgrid">
+  <div class="pcard rec">
+    <span class="tag">MODUL</span>
+    <div class="pimg"></div>
+    <div class="pname">Aiko Neostar 2S 460 Wp ABC Back-Contact (Premium)</div>
+    <div class="pspecs">Premium-Modul, hoher Wirkungsgrad</div>
+    <div class="pprice">109,90 €<span class="vat">pro Modul, 0 % MwSt.</span></div>
+    <a class="pbtn" href="https://solarmeister-shop.de/products/aiko-neostar-2s-460-wp-abc-back-contact-premium">Ansehen</a>
+  </div>
+  <div class="pcard">
+    <div class="pimg"></div>
+    <div class="pname">APsystems EZ1-M Mikrowechselrichter 800 W</div>
+    <div class="pspecs">Für Balkonkraftwerke bis 800 W</div>
+    <div class="pprice">119 €<span class="vat">inkl. 0 % MwSt.</span></div>
+    <a class="pbtn" href="https://solarmeister-shop.de/products/apsystems-ez1-m-mikrowechselrichter-800-w">Ansehen</a>
+  </div>
+  <div class="pcard">
+    <div class="pimg"></div>
+    <div class="pname">Anker SOLIX Solarbank 3 E2700 Pro – Balkonkraftwerk-Speicher</div>
+    <div class="pspecs">2,69 kWh, eigenständiger Speicher</div>
+    <div class="pprice">829 €<span class="vat">inkl. 0 % MwSt.</span></div>
+    <a class="pbtn" href="https://solarmeister-shop.de/products/anker-solix-solarbank-3-e2700-pro-balkonkraftwerk-speicher-2-69-kwh">Ansehen</a>
+  </div>
+  <div class="pcard">
+    <div class="pimg"></div>
+    <div class="pname">10-kWp-DIY-Dachset mit Hybrid-Wechselrichter &amp; Unterkonstruktion</div>
+    <div class="pspecs">22× 450 Wp, komplett für den Selbstaufbau</div>
+    <div class="pprice">3.999 €<span class="vat">inkl. 0 % MwSt.</span></div>
+    <a class="pbtn" href="https://solarmeister-shop.de/products/10-kwp-diy-dachset-22-450-wp-10-kw-hybrid-wechselrichter-unterkonstruktion">Ansehen</a>
+  </div>
+</div>
+
+<h2 id="faq">Häufige Fragen</h2>
+<div class="faq-item"><h3>Was kostet eine 10-kWp-Solaranlage insgesamt?</h3><p>Ein 10-kWp-DIY-Dachset ohne Speicher kostet rund 3.999 €, mit integriertem 9,6-kWh-Speicher rund 7.699 € – jeweils zzgl. Elektrikerkosten für den Netzanschluss von ca. 800–1.500 €.</p></div>
+<div class="faq-item"><h3>Ist die Unterkonstruktion in Komplettsets enthalten?</h3><p>Ja, unsere DIY-Dachsets und Komplettsets enthalten die passende Unterkonstruktion für die jeweilige Modulanzahl.</p></div>
+<div class="faq-item"><h3>Warum sind Module der größte Kostenblock?</h3><p>Module machen mit rund 40–45 % den größten Anteil aus, da sie die technologisch aufwendigste Komponente sind und je nach Leistung und Zelltechnologie stark im Preis variieren.</p></div>
+<div class="faq-item"><h3>Lohnt sich ein teurerer Wechselrichter?</h3><p>Ein Hybrid-Wechselrichter lohnt sich vor allem, wenn du später einen Speicher nachrüsten möchtest, da er diesen direkt einbinden kann – ein reiner Mikrowechselrichter ist für Balkonkraftwerke ausreichend.</p></div>
+<div class="faq-item"><h3>Fällt beim Kauf noch Mehrwertsteuer an?</h3><p>Nein, seit der Gesetzesänderung gilt 0 % MwSt. gem. § 12 Abs. 3 UStG auf Photovoltaik-Komponenten für private Wohngebäude – der angegebene Preis ist der Endpreis.</p></div>
+<div class="faq-item"><h3>Was kostet ein Speicher zusätzlich?</h3><p>Ein Erweiterungsakku mit 2,69 kWh liegt bei rund 569 €, ein eigenständiger Balkonkraftwerk-Speicher gleicher Kapazität bei rund 829 € – größere Hausspeicher liegen entsprechend höher.</p></div>
+<div class="faq-item"><h3>Sind Elektrikerkosten im Setpreis enthalten?</h3><p>Nein, Elektrikerkosten für den Netzanschluss sind bei Dachanlagen separat zu kalkulieren und nicht im Set-Preis enthalten – bei Balkonkraftwerken entfallen sie komplett.</p></div>
+
+<div class="cta">
+  <p>Bereit, deine eigene Anlage zusammenzustellen?</p>
+  <a class="btn" href="https://solarmeister-shop.de/collections/komplettsets">Komplettsets ansehen</a>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Was ist in den Kosten einer Solaranlage enthalten?",
+  "description": "Was kostet eine Solaranlage wirklich? Der Überblick über Module, Wechselrichter, Unterkonstruktion, Speicher und Installationskosten mit echten Beispielpreisen.",
+  "inLanguage": "de",
+  "author": { "@type": "Organization", "name": "SolarMeister" },
+  "publisher": { "@type": "Organization", "name": "SolarMeister" }
+}
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "inLanguage": "de",
+  "mainEntity": [
+    {"@type":"Question","name":"Was kostet eine 10-kWp-Solaranlage insgesamt?","acceptedAnswer":{"@type":"Answer","text":"Ein 10-kWp-DIY-Dachset ohne Speicher kostet rund 3.999 €, mit integriertem 9,6-kWh-Speicher rund 7.699 € – jeweils zzgl. Elektrikerkosten für den Netzanschluss von ca. 800–1.500 €."}},
+    {"@type":"Question","name":"Ist die Unterkonstruktion in Komplettsets enthalten?","acceptedAnswer":{"@type":"Answer","text":"Ja, unsere DIY-Dachsets und Komplettsets enthalten die passende Unterkonstruktion für die jeweilige Modulanzahl."}},
+    {"@type":"Question","name":"Warum sind Module der größte Kostenblock?","acceptedAnswer":{"@type":"Answer","text":"Module machen mit rund 40–45 % den größten Anteil aus, da sie die technologisch aufwendigste Komponente sind und je nach Leistung und Zelltechnologie stark im Preis variieren."}},
+    {"@type":"Question","name":"Lohnt sich ein teurerer Wechselrichter?","acceptedAnswer":{"@type":"Answer","text":"Ein Hybrid-Wechselrichter lohnt sich vor allem, wenn du später einen Speicher nachrüsten möchtest, da er diesen direkt einbinden kann – ein reiner Mikrowechselrichter ist für Balkonkraftwerke ausreichend."}},
+    {"@type":"Question","name":"Fällt beim Kauf noch Mehrwertsteuer an?","acceptedAnswer":{"@type":"Answer","text":"Nein, seit der Gesetzesänderung gilt 0 % MwSt. gem. § 12 Abs. 3 UStG auf Photovoltaik-Komponenten für private Wohngebäude – der angegebene Preis ist der Endpreis."}},
+    {"@type":"Question","name":"Was kostet ein Speicher zusätzlich?","acceptedAnswer":{"@type":"Answer","text":"Ein Erweiterungsakku mit 2,69 kWh liegt bei rund 569 €, ein eigenständiger Balkonkraftwerk-Speicher gleicher Kapazität bei rund 829 € – größere Hausspeicher liegen entsprechend höher."}},
+    {"@type":"Question","name":"Sind Elektrikerkosten im Setpreis enthalten?","acceptedAnswer":{"@type":"Answer","text":"Nein, Elektrikerkosten für den Netzanschluss sind bei Dachanlagen separat zu kalkulieren und nicht im Set-Preis enthalten – bei Balkonkraftwerken entfallen sie komplett."}}
+  ]
+}
+</script>
+
 </body>
 </html>
