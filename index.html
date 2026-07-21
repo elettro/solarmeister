@@ -9,7 +9,6 @@
       --green: #5db13f;
       --green-dark: #3f8f2d;
       --slate: #1a2530;
-      --slate-soft: #24313d;
       --sand: #faf9f5;
       --white: #ffffff;
       --ink: #0f1720;
@@ -19,9 +18,7 @@
       --radius: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -32,9 +29,7 @@
       color: var(--ink);
     }
 
-    a {
-      color: inherit;
-    }
+    a { color: inherit; }
 
     .page {
       width: min(1240px, calc(100% - 40px));
@@ -66,6 +61,7 @@
       font-weight: 900;
       letter-spacing: -0.03em;
       color: var(--slate);
+      text-decoration: none;
     }
 
     .brand-mark {
@@ -192,9 +188,7 @@
       line-height: 1.45;
     }
 
-    .mini-card.dark p {
-      color: rgba(255, 255, 255, 0.72);
-    }
+    .mini-card.dark p { color: rgba(255, 255, 255, 0.72); }
 
     .section-title {
       display: flex;
@@ -342,9 +336,7 @@
       filter: none;
     }
 
-    .stage img.vertical {
-      max-height: 220px;
-    }
+    .stage img.vertical { max-height: 220px; }
 
     .usage {
       display: flex;
@@ -403,10 +395,7 @@
       line-height: 1.5;
     }
 
-    .swatches {
-      display: grid;
-      gap: 10px;
-    }
+    .swatches { display: grid; gap: 10px; }
 
     .swatch {
       display: flex;
@@ -444,79 +433,40 @@
       line-height: 1.5;
     }
 
-    .footer strong {
-      color: #fff;
-    }
-
-    .missing {
-      color: #dc2626;
-      font-weight: 900;
-    }
+    .footer strong { color: #fff; }
+    .missing { color: #dc2626; font-weight: 900; }
 
     @media (max-width: 920px) {
       .hero,
       .logo-grid,
-      .brand-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-title {
-        align-items: start;
-        flex-direction: column;
-      }
-
-      .topbar {
-        align-items: flex-start;
-        border-radius: 24px;
-        flex-direction: column;
-      }
+      .brand-grid { grid-template-columns: 1fr; }
+      .section-title { align-items: start; flex-direction: column; }
+      .topbar { align-items: flex-start; border-radius: 24px; flex-direction: column; }
     }
 
     @media (max-width: 580px) {
-      .page {
-        width: min(100% - 24px, 1240px);
-      }
-
-      .logo-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .ratio-block {
-        justify-items: start;
-      }
-
-      .stage {
-        min-height: 220px;
-        padding: 22px;
-      }
+      .page { width: min(100% - 24px, 1240px); }
+      .logo-header { align-items: flex-start; flex-direction: column; }
+      .ratio-block { justify-items: start; }
+      .stage { min-height: 220px; padding: 22px; }
     }
 
     @media print {
-      body {
-        background: #fff;
-      }
-
-      .topbar {
-        position: static;
-      }
-
+      body { background: #fff; }
+      .topbar { position: static; }
       .hero-panel,
       .logo-card,
-      .brand-card {
-        box-shadow: none;
-        break-inside: avoid;
-      }
+      .brand-card { box-shadow: none; break-inside: avoid; }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <nav class="topbar" aria-label="Brand home navigation">
-      <div class="brand-chip">
+      <a class="brand-chip" href="index.html">
         <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
         <span>SolarMeister Brand Home</span>
-      </div>
+      </a>
       <div class="topnav">
         <a href="#logos">Logos</a>
         <a href="#brand">Brand basics</a>
@@ -524,6 +474,7 @@
         <a href="onesheets/">One Sheets</a>
         <a href="legal-footer/">Legal Footer</a>
         <a href="blog-template/">Blog Template</a>
+        <a href="free-consultation/">Free Consultation</a>
       </div>
     </nav>
 
