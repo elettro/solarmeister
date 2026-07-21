@@ -1,0 +1,78 @@
+name: Add Blogs to remaining global navigation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-blogs-nav-main.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add Blogs to nav.main global headers
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          changed = []
+          for path in sorted(Path('.').rglob('*.html')):
+              text = path.read_text(encoding='utf-8')
+              match = re.search(
+                  r'(<nav\s+class="main"[^>]*aria-label="[^"]*global brand navigation[^"]*"[^>]*>)(.*?)(</nav>)',
+                  text,
+                  flags=re.S | re.I,
+              )
+              if not match or re.search(r'>\s*Blogs\s*</a>', match.group(2)):
+                  continue
+
+              depth = len(path.parent.parts)
+              href = 'blogs/' if depth == 0 else ('../' * depth) + 'blogs/'
+              indent_match = re.search(r'\n([ \t]*)<a\b', match.group(2))
+              indent = indent_match.group(1) if indent_match else '      '
+              link = f'\n{indent}<a href="{href}">Blogs</a>'
+              replacement = match.group(1) + match.group(2).rstrip() + link + '\n' + match.group(3)
+              text = text[:match.start()] + replacement + text[match.end():]
+              path.write_text(text, encoding='utf-8')
+              changed.append(str(path))
+
+          if not changed:
+              print('No remaining global navigation headers needed an update.')
+          else:
+              print('Updated:')
+              for item in changed:
+                  print(f' - {item}')
+
+      - name: Verify remaining global navigation headers
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          for path in sorted(Path('.').rglob('*.html')):
+              text = path.read_text(encoding='utf-8')
+              if re.search(r'<nav\s+class="main"[^>]*global brand navigation', text, flags=re.I):
+                  if not re.search(r'>\s*Blogs\s*</a>', text):
+                      raise SystemExit(f'Missing Blogs link: {path}')
+
+      - name: Commit updates and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/add-blogs-nav-main.yml
+          git add '*.html' '**/*.html'
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Add Blogs to remaining global navigation"
+          git push origin main
