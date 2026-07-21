@@ -275,17 +275,33 @@
       .card{min-height:350px;padding:24px;border-radius:24px}
       .meta{margin-bottom:30px}
     }
-  </style>
+  
+.topnav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.topnav a{display:inline-flex;align-items:center;height:34px;padding:0 13px;border:1px solid var(--border);border-radius:999px;background:var(--white);color:var(--muted);text-decoration:none;font-size:13px;font-weight:800;transition:.18s}
+.topnav a:hover,.topnav a[aria-current="page"]{color:var(--green-dark);border-color:rgba(93,177,63,.36);background:rgba(93,177,63,.09)}
+@media(max-width:920px){.topbar{align-items:flex-start;border-radius:24px;flex-direction:column}.topnav{justify-content:flex-start}}
+
+</style>
 </head>
 <body>
   <main class="page">
-    <nav class="topbar" aria-label="Blog navigation">
-      <a class="brand" href="../">
-        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
-        <span>SolarMeister</span>
-      </a>
-      <a class="nav-link" href="../">Brand Home</a>
-    </nav>
+    <nav class="topbar" aria-label="SolarMeister brand navigation">
+  <a class="brand" href="../index.html">
+    <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span>SolarMeister Brand Home</span>
+  </a>
+  <div class="topnav">
+    <a href="../index.html">Logos</a>
+    <a href="../index.html#brand">Brand basics</a>
+    <a href="../favicon/">Favicons</a>
+    <a href="../onesheets/">One Sheets</a>
+    <a href="../legal-footer/">Legal Footer</a>
+    <a href="../blog-template/">Blog Template</a>
+    <a href="../free-consultation/">Free Consultation</a>
+    <a href="../calculator/">Calculator</a>
+    <a href="./" aria-current="page">Blogs</a>
+  </div>
+</nav>
 
     <header class="hero">
       <div class="eyebrow">
