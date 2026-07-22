@@ -1,0 +1,71 @@
+name: Rename Blogs directory
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/rename-blogs-directory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rename blogs directory and update local navigation links
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+
+          source = Path('blogs/index.html')
+          destination = Path('blog/index.html')
+
+          if not source.exists():
+              raise SystemExit('Expected blogs/index.html to exist')
+
+          destination.parent.mkdir(parents=True, exist_ok=True)
+          shutil.copy2(source, destination)
+
+          replacements = {
+              'href="blogs/"': 'href="blog/"',
+              "href='blogs/'": "href='blog/'",
+              'href="../blogs/"': 'href="../blog/"',
+              "href='../blogs/'": "href='../blog/'",
+              'href="./blogs/"': 'href="./blog/"',
+              "href='./blogs/'": "href='./blog/'",
+              'href="/blogs/"': 'href="/blog/"',
+              "href='/blogs/'": "href='/blog/'",
+          }
+
+          for path in Path('.').rglob('*.html'):
+              if '.git' in path.parts or path == source:
+                  continue
+              text = path.read_text(encoding='utf-8')
+              updated = text
+              for old, new in replacements.items():
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  path.write_text(updated, encoding='utf-8')
+
+          source.unlink()
+          try:
+              source.parent.rmdir()
+          except OSError:
+              pass
+          PY
+
+      - name: Remove one-time workflow and commit
+        run: |
+          git rm .github/workflows/rename-blogs-directory.yml
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Rename Blogs directory to blog"
+          git push
