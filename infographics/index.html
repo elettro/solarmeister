@@ -112,5 +112,6 @@
     document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-view]').forEach(item=>item.classList.remove('active'));button.classList.add('active');gallery.classList.toggle('stack',button.dataset.view==='stack')}));
     modalClose.addEventListener('click',closeModal);modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});document.addEventListener('keydown',event=>{if(event.key==='Escape')closeModal()});
   </script>
+  <script src="../assets/brand-mobile-nav.js" defer data-sm-mobile-nav></script>
 </body>
 </html>
