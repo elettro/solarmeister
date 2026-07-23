@@ -1,0 +1,78 @@
+name: Sync T-Shirts Brand Navigation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-brand-nav-tshirts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add T-Shirts to every SolarMeister brand navigation
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          changed = []
+
+          for path in sorted(Path('.').rglob('index.html')):
+              text = path.read_text(encoding='utf-8')
+
+              # Only update pages that use the SolarMeister brand navigation.
+              if 'SolarMeister Brand Home' not in text and 'global brand navigation' not in text:
+                  continue
+
+              # Leave any page that already includes the T-Shirts link unchanged.
+              if re.search(r'href=["\'][^"\']*tshirts/?["\'][^>]*>T-Shirts<', text, re.I):
+                  continue
+
+              depth = len(path.parent.parts)
+              prefix = '' if depth == 0 else '../' * depth
+              link = f'<a href="{prefix}tshirts/">T-Shirts</a>'
+
+              # Preferred placement: directly after Infographics.
+              pattern = re.compile(
+                  r'(<a\s+[^>]*href=["\'][^"\']*infographics/?["\'][^>]*>\s*Infographics\s*</a>)',
+                  re.I,
+              )
+              updated, count = pattern.subn(r'\1\n        ' + link, text, count=1)
+
+              # Fallback placement: after One Sheets when Infographics is absent.
+              if count == 0:
+                  pattern = re.compile(
+                      r'(<a\s+[^>]*href=["\'][^"\']*onesheets/?["\'][^>]*>\s*One Sheets\s*</a>)',
+                      re.I,
+                  )
+                  updated, count = pattern.subn(r'\1\n        ' + link, text, count=1)
+
+              if count:
+                  path.write_text(updated, encoding='utf-8')
+                  changed.append(str(path))
+
+          print('Updated navigation in:')
+          for item in changed:
+              print(f' - {item}')
+
+      - name: Commit synchronized navigation
+        run: |
+          if git diff --quiet; then
+            echo "No navigation updates were needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add '**/index.html' index.html
+          git commit -m "Add T-Shirts to all SolarMeister brand navigation"
+          git push
