@@ -1,0 +1,71 @@
+name: Sync SolarMeister Mobile Navigation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-mobile-brand-nav.yml'
+      - 'assets/brand-mobile-nav.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-mobile-navigation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add shared mobile navigation script to brand pages
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          changed = []
+          marker = 'data-sm-mobile-nav'
+
+          for path in sorted(Path('.').rglob('index.html')):
+              text = path.read_text(encoding='utf-8')
+
+              if 'class="topbar"' not in text or 'class="topnav"' not in text:
+                  continue
+
+              if marker in text:
+                  continue
+
+              depth = len(path.parent.parts)
+              prefix = '../' * depth
+              script = f'<script src="{prefix}assets/brand-mobile-nav.js" defer {marker}></script>'
+
+              updated, count = re.subn(
+                  r'</body>',
+                  f'  {script}\n</body>',
+                  text,
+                  count=1,
+                  flags=re.IGNORECASE,
+              )
+
+              if count:
+                  path.write_text(updated, encoding='utf-8')
+                  changed.append(str(path))
+
+          print('Updated mobile navigation in:')
+          for item in changed:
+              print(f' - {item}')
+
+      - name: Commit synchronized mobile navigation
+        run: |
+          if git diff --quiet; then
+            echo "No mobile navigation updates were needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- '**/index.html' 'index.html'
+          git commit -m "Add mobile hamburger navigation to SolarMeister pages"
+          git push
