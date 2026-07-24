@@ -1,4 +1,4 @@
-name: Sync T-Shirts Brand Navigation
+name: Sync SolarMeister Brand Navigation
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Add T-Shirts to every SolarMeister brand navigation
+      - name: Add shared links to every SolarMeister brand navigation
         shell: python
         run: |
           from pathlib import Path
@@ -27,37 +27,55 @@ jobs:
 
           changed = []
 
+          def has_link(text, slug, label):
+              return re.search(
+                  rf'href=["\'][^"\']*{slug}/?(?:index\.html)?["\'][^>]*>\s*{re.escape(label)}\s*</a>',
+                  text,
+                  re.I,
+              ) is not None
+
+          def insert_after(text, anchors, link):
+              for slug, label in anchors:
+                  pattern = re.compile(
+                      rf'(<a\s+[^>]*href=["\'][^"\']*{slug}/?(?:index\.html)?["\'][^>]*>\s*{re.escape(label)}\s*</a>)',
+                      re.I,
+                  )
+                  updated, count = pattern.subn(r'\1\n        ' + link, text, count=1)
+                  if count:
+                      return updated, True
+              return text, False
+
           for path in sorted(Path('.').rglob('index.html')):
               text = path.read_text(encoding='utf-8')
 
-              # Only update pages that use the SolarMeister brand navigation.
+              # Only update pages that already use the SolarMeister global brand header.
               if 'SolarMeister Brand Home' not in text and 'global brand navigation' not in text:
-                  continue
-
-              # Leave any page that already includes the T-Shirts link unchanged.
-              if re.search(r'href=["\'][^"\']*tshirts/?["\'][^>]*>T-Shirts<', text, re.I):
                   continue
 
               depth = len(path.parent.parts)
               prefix = '' if depth == 0 else '../' * depth
-              link = f'<a href="{prefix}tshirts/">T-Shirts</a>'
+              updated = text
+              page_changed = False
 
-              # Preferred placement: directly after Infographics.
-              pattern = re.compile(
-                  r'(<a\s+[^>]*href=["\'][^"\']*infographics/?["\'][^>]*>\s*Infographics\s*</a>)',
-                  re.I,
-              )
-              updated, count = pattern.subn(r'\1\n        ' + link, text, count=1)
-
-              # Fallback placement: after One Sheets when Infographics is absent.
-              if count == 0:
-                  pattern = re.compile(
-                      r'(<a\s+[^>]*href=["\'][^"\']*onesheets/?["\'][^>]*>\s*One Sheets\s*</a>)',
-                      re.I,
+              if not has_link(updated, 'tshirts', 'T-Shirts'):
+                  link = f'<a href="{prefix}tshirts/">T-Shirts</a>'
+                  updated, inserted = insert_after(
+                      updated,
+                      [('infographics', 'Infographics'), ('onesheets', 'One Sheets')],
+                      link,
                   )
-                  updated, count = pattern.subn(r'\1\n        ' + link, text, count=1)
+                  page_changed = page_changed or inserted
 
-              if count:
+              if not has_link(updated, 'meisternetz', 'MeisterNetz'):
+                  link = f'<a href="{prefix}meisternetz/">MeisterNetz</a>'
+                  updated, inserted = insert_after(
+                      updated,
+                      [('tshirts', 'T-Shirts'), ('infographics', 'Infographics'), ('onesheets', 'One Sheets')],
+                      link,
+                  )
+                  page_changed = page_changed or inserted
+
+              if page_changed and updated != text:
                   path.write_text(updated, encoding='utf-8')
                   changed.append(str(path))
 
@@ -74,5 +92,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add '**/index.html' index.html
-          git commit -m "Add T-Shirts to all SolarMeister brand navigation"
+          git commit -m "Add MeisterNetz to all SolarMeister global navigation"
           git push
