@@ -27,12 +27,36 @@ jobs:
 
           changed = []
 
-          def has_link(text, slug, label):
-              return re.search(
-                  rf'href=["\'][^"\']*{slug}/?(?:index\.html)?["\'][^>]*>\s*{re.escape(label)}\s*</a>',
-                  text,
+          def anchor_pattern(label):
+              return re.compile(
+                  rf'<a\s+[^>]*>\s*{re.escape(label)}\s*</a>',
                   re.I,
-              ) is not None
+              )
+
+          def has_link(text, label):
+              return anchor_pattern(label).search(text) is not None
+
+          def dedupe_link(text, label):
+              pattern = anchor_pattern(label)
+              matches = list(pattern.finditer(text))
+              if len(matches) <= 1:
+                  return text, False
+
+              keep_index = next(
+                  (index for index, match in enumerate(matches) if 'aria-current' in match.group(0).lower()),
+                  0,
+              )
+              keep_start = matches[keep_index].start()
+              seen_kept = False
+
+              def replace(match):
+                  nonlocal seen_kept
+                  if match.start() == keep_start and not seen_kept:
+                      seen_kept = True
+                      return match.group(0)
+                  return ''
+
+              return pattern.sub(replace, text), True
 
           def insert_after(text, anchors, link):
               for slug, label in anchors:
@@ -57,7 +81,11 @@ jobs:
               updated = text
               page_changed = False
 
-              if not has_link(updated, 'tshirts', 'T-Shirts'):
+              for label in ('T-Shirts', 'MeisterNetz'):
+                  updated, deduped = dedupe_link(updated, label)
+                  page_changed = page_changed or deduped
+
+              if not has_link(updated, 'T-Shirts'):
                   link = f'<a href="{prefix}tshirts/">T-Shirts</a>'
                   updated, inserted = insert_after(
                       updated,
@@ -66,7 +94,7 @@ jobs:
                   )
                   page_changed = page_changed or inserted
 
-              if not has_link(updated, 'meisternetz', 'MeisterNetz'):
+              if not has_link(updated, 'MeisterNetz'):
                   link = f'<a href="{prefix}meisternetz/">MeisterNetz</a>'
                   updated, inserted = insert_after(
                       updated,
@@ -92,5 +120,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add '**/index.html' index.html
-          git commit -m "Add MeisterNetz to all SolarMeister global navigation"
+          git commit -m "Normalize MeisterNetz links in SolarMeister global navigation"
           git push
