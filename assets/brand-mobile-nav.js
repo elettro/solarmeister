@@ -184,9 +184,27 @@
   const navBars = [...document.querySelectorAll('.topbar')].filter((bar) => bar.querySelector('.topnav'));
 
   navBars.forEach((topbar, index) => {
+    const nav = topbar.querySelector('.topnav');
+
+    const hasDailyPrice = [...nav.querySelectorAll('a')].some((link) =>
+      link.href === 'https://elettro.github.io/solarmeister/daily-price/' ||
+      link.textContent.trim().toLowerCase() === 'daily price'
+    );
+
+    if (!hasDailyPrice) {
+      const dailyPriceLink = document.createElement('a');
+      dailyPriceLink.href = 'https://elettro.github.io/solarmeister/daily-price/';
+      dailyPriceLink.textContent = 'Daily Price';
+      const blogsLink = [...nav.querySelectorAll('a')].find((link) => link.textContent.trim().toLowerCase() === 'blogs');
+      if (blogsLink) {
+        nav.insertBefore(dailyPriceLink, blogsLink);
+      } else {
+        nav.appendChild(dailyPriceLink);
+      }
+    }
+
     if (topbar.classList.contains('sm-nav-enhanced')) return;
 
-    const nav = topbar.querySelector('.topnav');
     const navId = nav.id || `sm-mobile-nav-${index + 1}`;
     nav.id = navId;
     topbar.classList.add('sm-nav-enhanced');
