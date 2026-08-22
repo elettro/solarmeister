@@ -25,7 +25,9 @@ Every Balkonstrom price-sync run must also run the availability sync in the same
 
 ## Current implementation
 
-`scripts/sync-balkonstrom-availability.mjs` implements the availability guardrail for mapped products.
+`scripts/sync-balkonstrom-availability.mjs` implements the availability guardrail across active SolarMeister supplier products identified by `SM-` SKUs.
+
+The sync uses the SolarMeister product handle as the Balkonstrom source handle by default. Genuine handle differences are stored in an explicit override map in the script. It never guesses by product title.
 
 `.github/workflows/sync-balkonstrom-availability.yml` runs the availability check daily and can also be run manually.
 
@@ -33,4 +35,7 @@ When the automated price writer is added or updated, it must invoke the same ava
 
 ## Mapping rule
 
-Each synchronized SolarMeister product must have an explicit Balkonstrom source mapping. Do not guess source products by title similarity at write time.
+- Supplier products are scoped by `SM-` SKU.
+- Matching SolarMeister/Balkonstrom handles are used directly.
+- Handle differences require an explicit override.
+- A missing or unverifiable Balkonstrom source produces `UNKNOWN` and leaves Shopify unchanged.
