@@ -8,24 +8,18 @@ if (!SHOPIFY_ADMIN_TOKEN) {
   process.exit(2);
 }
 
-// Availability is supplier-authoritative for SolarMeister dropship products.
-// IMPORTANT: A fetch/parsing failure must NEVER be interpreted as sold out.
-// Add additional mapped Balkonstrom products here as the synchronized catalog expands.
-const PRODUCTS = [
-  { solarHandle: 'anker-solix-solarbank-3-e2700-pro', sourceHandle: 'anker-solix-solarbank-3-e2700-pro' },
-  { solarHandle: 'anker-solix-solarbank-4-e5000-pro', sourceHandle: 'anker-solix-solarbank-4-e5000-pro' },
-  { solarHandle: 'anker-solix-solarbank-max-ac', sourceHandle: 'anker-solix-solarbank-max-ac' },
-  { solarHandle: 'ecoflow-delta-pro-3-powerstation', sourceHandle: 'ecoflow-delta-pro-3' },
-  { solarHandle: 'ecoflow-stream-ultra', sourceHandle: 'ecoflow-stream-ultra' },
-  { solarHandle: 'ecoflow-stream-ultra-x', sourceHandle: 'ecoflow-stream-ultra-x' },
-  { solarHandle: 'hoymiles-hibattery-4020-ac', sourceHandle: 'hoymiles-hibattery-4020-ac' },
-  { solarHandle: 'hoymiles-hibattery-4020-x', sourceHandle: 'hoymiles-hibattery-4020-x' },
-];
+// Balkonstrom is the availability source of truth for SolarMeister supplier products.
+// Supplier products are identified by SolarMeister SKUs beginning with "SM-".
+// Most cloned products retain the same Shopify product handle as Balkonstrom.
+// Only genuine handle differences belong in this override map.
+const SOURCE_HANDLE_OVERRIDES = new Map([
+  ['ecoflow-delta-pro-3-powerstation', 'ecoflow-delta-pro-3'],
+]);
 
 async function fetchJson(url) {
   const response = await fetch(url, {
     headers: {
-      'user-agent': 'SolarMeister-Balkonstrom-Sync/1.0',
+      'user-agent': 'SolarMeister-Balkonstrom-Sync/1.1',
       accept: 'application/json,text/javascript,*/*;q=0.8',
     },
     redirect: 'follow',
@@ -40,11 +34,14 @@ async function supplierAvailability(sourceHandle) {
   if (!product || !Array.isArray(product.variants) || product.variants.length === 0) {
     throw new Error(`No variants returned by Balkonstrom for ${sourceHandle}`);
   }
+
   const available = product.variants.some((variant) => variant.available === true);
   const explicitlyUnavailable = product.variants.every((variant) => variant.available === false);
+
   if (!available && !explicitlyUnavailable) {
     throw new Error(`Unknown Balkonstrom availability for ${sourceHandle}`);
   }
+
   return { available, url, sourceTitle: product.title || sourceHandle };
 }
 
@@ -63,15 +60,18 @@ async function shopifyGraphQL(query, variables = {}) {
   return json.data;
 }
 
-const FIND_PRODUCT = `
-  query FindProduct($identifier: ProductIdentifierInput!) {
-    productByIdentifier(identifier: $identifier) {
-      id
-      title
-      handle
-      variants(first: 250) {
-        nodes { id title inventoryPolicy availableForSale inventoryQuantity }
+const LIST_PRODUCTS = `
+  query SupplierProducts($first: Int!, $after: String) {
+    products(first: $first, after: $after, query: "status:active") {
+      nodes {
+        id
+        title
+        handle
+        variants(first: 250) {
+          nodes { id title sku inventoryPolicy availableForSale inventoryQuantity }
+        }
       }
+      pageInfo { hasNextPage endCursor }
     }
   }
 `;
@@ -85,20 +85,38 @@ const UPDATE_VARIANTS = `
   }
 `;
 
+async function listSupplierProducts() {
+  const products = [];
+  let after = null;
+
+  do {
+    const data = await shopifyGraphQL(LIST_PRODUCTS, { first: 100, after });
+    const connection = data.products;
+
+    for (const product of connection.nodes) {
+      const supplierProduct = product.variants.nodes.some((variant) =>
+        typeof variant.sku === 'string' && variant.sku.startsWith('SM-')
+      );
+      if (supplierProduct) products.push(product);
+    }
+
+    after = connection.pageInfo.hasNextPage ? connection.pageInfo.endCursor : null;
+  } while (after);
+
+  return products;
+}
+
 const report = [];
 let failures = 0;
+const products = await listSupplierProducts();
 
-for (const mapping of PRODUCTS) {
+for (const product of products) {
+  const sourceHandle = SOURCE_HANDLE_OVERRIDES.get(product.handle) || product.handle;
+
   try {
-    const supplier = await supplierAvailability(mapping.sourceHandle);
+    const supplier = await supplierAvailability(sourceHandle);
     const policy = supplier.available ? 'CONTINUE' : 'DENY';
-
-    const data = await shopifyGraphQL(FIND_PRODUCT, { identifier: { handle: mapping.solarHandle } });
-    const product = data.productByIdentifier;
-    if (!product) throw new Error(`SolarMeister product not found: ${mapping.solarHandle}`);
-
-    const variants = product.variants.nodes;
-    const changed = variants.filter((variant) => variant.inventoryPolicy !== policy);
+    const changed = product.variants.nodes.filter((variant) => variant.inventoryPolicy !== policy);
 
     if (!DRY_RUN && changed.length) {
       const updated = await shopifyGraphQL(UPDATE_VARIANTS, {
@@ -111,6 +129,7 @@ for (const mapping of PRODUCTS) {
 
     report.push({
       product: product.title,
+      sourceHandle,
       supplier: supplier.available ? 'AVAILABLE' : 'SOLD_OUT',
       shopifyPolicy: policy,
       variantsChanged: changed.length,
@@ -118,10 +137,13 @@ for (const mapping of PRODUCTS) {
     });
   } catch (error) {
     failures += 1;
-    // Fail safe: unknown supplier status preserves Shopify's last-known status.
-    // Never convert an error into DENY / sold out.
+
+    // FAIL SAFE:
+    // A source lookup error, timeout, CAPTCHA, parser change, 404, or ambiguous result
+    // must never become a SolarMeister "Ausverkauft" state. Preserve last-known Shopify status.
     report.push({
-      product: mapping.solarHandle,
+      product: product.title,
+      sourceHandle,
       supplier: 'UNKNOWN',
       shopifyPolicy: 'UNCHANGED',
       variantsChanged: 0,
@@ -131,6 +153,7 @@ for (const mapping of PRODUCTS) {
 }
 
 console.table(report);
+console.log(`Checked ${products.length} active SolarMeister supplier product(s).`);
 
 if (failures) {
   console.error(`${failures} product(s) could not be verified. Their Shopify availability was intentionally left unchanged.`);
