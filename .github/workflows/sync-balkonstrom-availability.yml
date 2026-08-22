@@ -1,0 +1,29 @@
+name: Sync Balkonstrom Availability
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  sync-availability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Sync supplier availability to Shopify
+        env:
+          SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
+          SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+          SHOPIFY_API_VERSION: '2026-07'
+        run: node scripts/sync-balkonstrom-availability.mjs
