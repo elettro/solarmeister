@@ -1,0 +1,1 @@
+This lockup currently uses the approved wide PNG source for both print and web delivery until a separately optimized binary is supplied.
