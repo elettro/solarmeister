@@ -56,6 +56,9 @@ jobs:
         env:
           SYNC_REPORT_PATH: sync-report.json
           SYNC_REPORT_TO: dpalermo@elettro.com,fs@neckermann-strom.de
+          PRICE_DRY_RUN: '1'
+          PRICE_MARKUP: '0.17'
+          MAX_PRICE_CHANGE_RATIO: '0.50'
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
