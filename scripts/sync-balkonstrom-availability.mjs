@@ -1,3 +1,5 @@
+import { writeFile } from 'node:fs/promises';
+
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN || 'f3yf3y-qu.myshopify.com';
 const SHOPIFY_ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
 const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION || '2026-07';
@@ -5,6 +7,7 @@ const DRY_RUN = process.env.DRY_RUN === '1';
 const PRICE_DRY_RUN = process.env.PRICE_DRY_RUN !== '0';
 const PRICE_MARKUP = Number(process.env.PRICE_MARKUP || '0.17');
 const MAX_PRICE_CHANGE_RATIO = Number(process.env.MAX_PRICE_CHANGE_RATIO || '0.50');
+const REPORT_PATH = process.env.SYNC_REPORT_PATH || 'sync-report.json';
 
 if (!SHOPIFY_ADMIN_TOKEN) {
   console.error('Missing SHOPIFY_ADMIN_TOKEN. No Shopify changes were made.');
@@ -16,10 +19,6 @@ if (!Number.isFinite(PRICE_MARKUP) || PRICE_MARKUP < 0) {
   process.exit(2);
 }
 
-// Balkonstrom is the availability and supplier-price source of truth for SolarMeister supplier products.
-// Supplier products are identified by SolarMeister SKUs beginning with "SM-".
-// Most cloned products retain the same Shopify product handle as Balkonstrom.
-// Only genuine handle differences belong in this override map.
 const SOURCE_HANDLE_OVERRIDES = new Map([
   ['ecoflow-delta-pro-3-powerstation', 'ecoflow-delta-pro-3'],
 ]);
@@ -32,7 +31,6 @@ function roundMarkedUpPriceToWholeEuro(sourcePriceCents) {
   if (!Number.isInteger(sourcePriceCents) || sourcePriceCents <= 0) {
     throw new Error(`Invalid supplier price in cents: ${sourcePriceCents}`);
   }
-
   const sourceEuros = sourcePriceCents / 100;
   return Math.round(sourceEuros * (1 + PRICE_MARKUP));
 }
@@ -68,7 +66,7 @@ function matchSupplierVariant(shopifyVariant, supplierVariants) {
 async function fetchJson(url) {
   const response = await fetch(url, {
     headers: {
-      'user-agent': 'SolarMeister-Balkonstrom-Sync/1.2',
+      'user-agent': 'SolarMeister-Balkonstrom-Sync/1.3',
       accept: 'application/json,text/javascript,*/*;q=0.8',
     },
     redirect: 'follow',
@@ -86,7 +84,6 @@ async function supplierProduct(sourceHandle) {
 
   const available = product.variants.some((variant) => variant.available === true);
   const explicitlyUnavailable = product.variants.every((variant) => variant.available === false);
-
   if (!available && !explicitlyUnavailable) {
     throw new Error(`Unknown Balkonstrom availability for ${sourceHandle}`);
   }
@@ -152,21 +149,17 @@ const VERIFY_PRODUCT = `
 async function listSupplierProducts() {
   const products = [];
   let after = null;
-
   do {
     const data = await shopifyGraphQL(LIST_PRODUCTS, { first: 100, after });
     const connection = data.products;
-
     for (const product of connection.nodes) {
       const supplierProduct = product.variants.nodes.some((variant) =>
         typeof variant.sku === 'string' && variant.sku.startsWith('SM-')
       );
       if (supplierProduct) products.push(product);
     }
-
     after = connection.pageInfo.hasNextPage ? connection.pageInfo.endCursor : null;
   } while (after);
-
   return products;
 }
 
@@ -195,29 +188,14 @@ for (const product of products) {
 
       if (!supplierVariant) {
         priceSkipped += 1;
-        report.push({
-          product: product.title,
-          variant: variant.title,
-          sourceHandle,
-          check: 'PRICE',
-          status: 'SKIP_UNMATCHED_VARIANT',
-          currentPrice,
-        });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_UNMATCHED_VARIANT', currentPrice });
         continue;
       }
 
       const sourcePriceCents = Number(supplierVariant.price);
       if (!Number.isInteger(sourcePriceCents) || sourcePriceCents <= 0) {
         priceSkipped += 1;
-        report.push({
-          product: product.title,
-          variant: variant.title,
-          sourceHandle,
-          check: 'PRICE',
-          status: 'SKIP_INVALID_SOURCE_PRICE',
-          sourcePriceCents,
-          currentPrice,
-        });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_INVALID_SOURCE_PRICE', sourcePriceCents, currentPrice });
         continue;
       }
 
@@ -227,74 +205,35 @@ for (const product of products) {
 
       if (currentPrice === null) {
         priceSkipped += 1;
-        report.push({
-          product: product.title,
-          variant: variant.title,
-          sourceHandle,
-          check: 'PRICE',
-          status: 'SKIP_INVALID_SHOPIFY_PRICE',
-          sourcePrice,
-          targetPrice,
-          currentPrice: variant.price,
-        });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_INVALID_SHOPIFY_PRICE', sourcePrice, targetPrice, currentPrice: variant.price });
         continue;
       }
 
       const differenceRatio = Math.abs(targetPrice - currentPrice) / currentPrice;
       if (differenceRatio > MAX_PRICE_CHANGE_RATIO) {
         priceSkipped += 1;
-        report.push({
-          product: product.title,
-          variant: variant.title,
-          sourceHandle,
-          check: 'PRICE',
-          status: 'SKIP_SUSPICIOUS_CHANGE',
-          sourcePrice,
-          currentPrice,
-          targetPrice,
-          differencePct: `${(differenceRatio * 100).toFixed(1)}%`,
-        });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_SUSPICIOUS_CHANGE', sourcePrice, currentPrice, targetPrice, differencePct: `${(differenceRatio * 100).toFixed(1)}%` });
         continue;
       }
 
       if (Math.abs(currentPrice - targetPrice) < 0.005) {
-        report.push({
-          product: product.title,
-          variant: variant.title,
-          sourceHandle,
-          check: 'PRICE',
-          status: 'PARITY_OK',
-          sourcePrice,
-          currentPrice,
-          targetPrice,
-        });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'PARITY_OK', sourcePrice, currentPrice, targetPrice });
         continue;
       }
 
       if (PRICE_DRY_RUN || DRY_RUN) {
-        report.push({
-          product: product.title,
-          variant: variant.title,
-          sourceHandle,
-          check: 'PRICE',
-          status: 'WOULD_UPDATE',
-          sourcePrice,
-          currentPrice,
-          targetPrice,
-        });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'WOULD_UPDATE', sourcePrice, currentPrice, targetPrice });
       } else {
         const pending = updatesById.get(variant.id) || { id: variant.id };
         pending.price = targetPrice.toFixed(2);
         updatesById.set(variant.id, pending);
+        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'UPDATE_QUEUED', sourcePrice, currentPrice, targetPrice });
       }
     }
 
     const updates = [...updatesById.values()];
     if (!DRY_RUN && updates.length) {
-      const updated = await shopifyGraphQL(UPDATE_VARIANTS, {
-        productId: product.id,
-        variants: updates,
-      });
+      const updated = await shopifyGraphQL(UPDATE_VARIANTS, { productId: product.id, variants: updates });
       const errors = updated.productVariantsBulkUpdate.userErrors || [];
       if (errors.length) throw new Error(`Shopify mutation errors: ${JSON.stringify(errors)}`);
 
@@ -302,12 +241,9 @@ for (const product of products) {
         const verified = await shopifyGraphQL(VERIFY_PRODUCT, { id: product.id });
         const variants = verified.product?.variants?.nodes || [];
         const byId = new Map(variants.map((variant) => [variant.id, variant]));
-
         for (const update of updates.filter((item) => item.price)) {
           const actual = byId.get(update.id)?.price;
-          if (actual !== update.price) {
-            throw new Error(`Price verification failed for ${update.id}: expected ${update.price}, got ${actual}`);
-          }
+          if (actual !== update.price) throw new Error(`Price verification failed for ${update.id}: expected ${update.price}, got ${actual}`);
           priceUpdates += 1;
         }
       }
@@ -324,22 +260,45 @@ for (const product of products) {
     });
   } catch (error) {
     failures += 1;
-
-    // FAIL SAFE:
-    // A source lookup error, timeout, CAPTCHA, parser change, 404, ambiguous variant match,
-    // invalid source price, or verification failure must never become an unverified write.
-    report.push({
-      product: product.title,
-      sourceHandle,
-      check: 'PRODUCT',
-      status: 'FAILED',
-      supplier: 'UNKNOWN',
-      shopifyPolicy: 'UNCHANGED',
-      error: error.message,
-    });
+    report.push({ product: product.title, sourceHandle, check: 'PRODUCT', status: 'FAILED', supplier: 'UNKNOWN', shopifyPolicy: 'UNCHANGED', error: error.message });
   }
 }
 
+const inventoryUpdates = report.filter((item) => item.check === 'AVAILABILITY').reduce((sum, item) => sum + Number(item.variantsChanged || 0), 0);
+const priceWouldUpdate = report.filter((item) => item.status === 'WOULD_UPDATE').length;
+const priceParity = report.filter((item) => item.status === 'PARITY_OK').length;
+const questionable = report.filter((item) => item.status === 'FAILED' || String(item.status || '').startsWith('SKIP_'));
+const changes = report.filter((item) => item.status === 'WOULD_UPDATE' || item.status === 'UPDATE_QUEUED' || (item.check === 'AVAILABILITY' && Number(item.variantsChanged || 0) > 0));
+
+const structuredReport = {
+  generatedAt: new Date().toISOString(),
+  store: SHOPIFY_STORE_DOMAIN,
+  source: 'https://www.balkonstrom.com',
+  pricing: {
+    markupPercent: PRICE_MARKUP * 100,
+    roundingRule: 'nearest whole euro',
+    maxPriceChangePercent: MAX_PRICE_CHANGE_RATIO * 100,
+    mode: PRICE_DRY_RUN || DRY_RUN ? 'DRY_RUN' : 'LIVE',
+  },
+  summary: {
+    productsChecked: products.length,
+    inventoryUpdates,
+    priceCandidates,
+    priceUpdates,
+    priceWouldUpdate,
+    priceSkipped,
+    priceParity,
+    failures,
+    needReview: questionable.length,
+    noActionNeeded: questionable.length === 0,
+  },
+  questionable,
+  changes,
+  details: report,
+};
+
+await writeFile(REPORT_PATH, `${JSON.stringify(structuredReport, null, 2)}\n`, 'utf8');
+console.log(`Structured report written to ${REPORT_PATH}.`);
 console.table(report);
 console.log(`Checked ${products.length} active SolarMeister supplier product(s).`);
 console.log(`Price candidates checked: ${priceCandidates}. Price writes: ${priceUpdates}. Price skips: ${priceSkipped}.`);
