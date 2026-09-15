@@ -8,6 +8,10 @@ const PRICE_DRY_RUN = process.env.PRICE_DRY_RUN !== '0';
 const PRICE_MARKUP = Number(process.env.PRICE_MARKUP || '0.17');
 const MAX_PRICE_CHANGE_RATIO = Number(process.env.MAX_PRICE_CHANGE_RATIO || '0.50');
 const REPORT_PATH = process.env.SYNC_REPORT_PATH || 'sync-report.json';
+const SUPPLIER_MIN_REQUEST_INTERVAL_MS = Number(process.env.SUPPLIER_MIN_REQUEST_INTERVAL_MS || '900');
+const SUPPLIER_MAX_RETRIES = Number(process.env.SUPPLIER_MAX_RETRIES || '5');
+const SUPPLIER_RETRY_BASE_MS = Number(process.env.SUPPLIER_RETRY_BASE_MS || '2000');
+const SUPPLIER_RETRY_MAX_MS = Number(process.env.SUPPLIER_RETRY_MAX_MS || '30000');
 
 if (!SHOPIFY_ADMIN_TOKEN) {
   console.error('Missing SHOPIFY_ADMIN_TOKEN. No Shopify changes were made.');
@@ -63,16 +67,85 @@ function matchSupplierVariant(shopifyVariant, supplierVariants) {
   return null;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+let nextSupplierRequestAt = 0;
+
+async function throttleSupplierRequest() {
+  const now = Date.now();
+  const waitMs = Math.max(0, nextSupplierRequestAt - now);
+  if (waitMs > 0) await sleep(waitMs);
+  nextSupplierRequestAt = Date.now() + SUPPLIER_MIN_REQUEST_INTERVAL_MS;
+}
+
+function retryAfterMs(response) {
+  const raw = response.headers.get('retry-after');
+  if (!raw) return null;
+
+  const seconds = Number(raw);
+  if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
+
+  const retryAt = Date.parse(raw);
+  if (Number.isFinite(retryAt)) return Math.max(0, retryAt - Date.now());
+
+  return null;
+}
+
+function shouldRetrySupplierStatus(status) {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
 async function fetchJson(url) {
-  const response = await fetch(url, {
-    headers: {
-      'user-agent': 'SolarMeister-Balkonstrom-Sync/1.3',
-      accept: 'application/json,text/javascript,*/*;q=0.8',
-    },
-    redirect: 'follow',
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
-  return response.json();
+  let lastError = null;
+
+  for (let attempt = 0; attempt <= SUPPLIER_MAX_RETRIES; attempt += 1) {
+    await throttleSupplierRequest();
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'user-agent': 'SolarMeister-Balkonstrom-Sync/1.4',
+          accept: 'application/json,text/javascript,*/*;q=0.8',
+        },
+        redirect: 'follow',
+      });
+
+      if (response.ok) return response.json();
+
+      const error = new Error(`HTTP ${response.status} for ${url}`);
+      lastError = error;
+
+      if (!shouldRetrySupplierStatus(response.status) || attempt >= SUPPLIER_MAX_RETRIES) {
+        throw error;
+      }
+
+      const headerDelay = retryAfterMs(response);
+      const exponentialDelay = Math.min(
+        SUPPLIER_RETRY_BASE_MS * (2 ** attempt),
+        SUPPLIER_RETRY_MAX_MS,
+      );
+      const waitMs = Math.max(headerDelay || 0, exponentialDelay);
+      console.warn(`Balkonstrom HTTP ${response.status}. Retry ${attempt + 1}/${SUPPLIER_MAX_RETRIES} in ${waitMs}ms: ${url}`);
+      await sleep(waitMs);
+    } catch (error) {
+      lastError = error;
+      const statusMatch = String(error.message || '').match(/^HTTP (\d+)/);
+      const status = statusMatch ? Number(statusMatch[1]) : null;
+
+      if (status !== null || attempt >= SUPPLIER_MAX_RETRIES) throw error;
+
+      const waitMs = Math.min(
+        SUPPLIER_RETRY_BASE_MS * (2 ** attempt),
+        SUPPLIER_RETRY_MAX_MS,
+      );
+      console.warn(`Balkonstrom request error. Retry ${attempt + 1}/${SUPPLIER_MAX_RETRIES} in ${waitMs}ms: ${error.message}`);
+      await sleep(waitMs);
+    }
+  }
+
+  throw lastError || new Error(`Failed to fetch ${url}`);
 }
 
 async function supplierProduct(sourceHandle) {
@@ -280,6 +353,12 @@ const structuredReport = {
     maxPriceChangePercent: MAX_PRICE_CHANGE_RATIO * 100,
     mode: PRICE_DRY_RUN || DRY_RUN ? 'DRY_RUN' : 'LIVE',
   },
+  supplierRequestPolicy: {
+    minRequestIntervalMs: SUPPLIER_MIN_REQUEST_INTERVAL_MS,
+    maxRetries: SUPPLIER_MAX_RETRIES,
+    retryBaseMs: SUPPLIER_RETRY_BASE_MS,
+    retryMaxMs: SUPPLIER_RETRY_MAX_MS,
+  },
   summary: {
     productsChecked: products.length,
     inventoryUpdates,
@@ -304,6 +383,7 @@ console.log(`Checked ${products.length} active SolarMeister supplier product(s).
 console.log(`Price candidates checked: ${priceCandidates}. Price writes: ${priceUpdates}. Price skips: ${priceSkipped}.`);
 console.log(`Price mode: ${PRICE_DRY_RUN || DRY_RUN ? 'DRY RUN - no price writes' : 'LIVE - validated price writes enabled'}.`);
 console.log(`Price rule: Balkonstrom x ${(1 + PRICE_MARKUP).toFixed(2)}, rounded to the nearest whole euro.`);
+console.log(`Supplier request policy: ${SUPPLIER_MIN_REQUEST_INTERVAL_MS}ms minimum interval, up to ${SUPPLIER_MAX_RETRIES} retries with backoff.`);
 
 if (failures) {
   console.error(`${failures} product(s) could not be fully verified. Unverified changes were intentionally left unchanged.`);
