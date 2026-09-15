@@ -28,7 +28,40 @@ const SOURCE_HANDLE_OVERRIDES = new Map([
 ]);
 
 function normalizeText(value) {
-  return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  return String(value || '')
+    .normalize('NFKC')
+    .trim()
+    .toLowerCase()
+    .replace(/(\d),(\d)/g, '$1.$2')
+    .replace(/[×]/g, 'x')
+    .replace(/\s+/g, ' ');
+}
+
+function normalizeProductTitle(value) {
+  return normalizeText(value)
+    .replace(/[®™]/g, '')
+    .replace(/\s*[-–—]\s*/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeVariantTitle(value) {
+  return normalizeText(value)
+    .replace(/\(\s*\+?\s*\d+(?:[.,]\d+)?\s*€\s*\)/g, ' ')
+    .replace(/\bzusatzspeicher\b/g, 'zusatzbatterie')
+    .replace(/\berweiterungsspeicher\b/g, 'zusatzbatterie')
+    .replace(/\bzusatzakku\b/g, 'zusatzbatterie')
+    .replace(/[()]/g, ' ')
+    .replace(/[^a-z0-9äöüß.+/-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function compactVariantTitle(value) {
+  return normalizeVariantTitle(value)
+    .replace(/\b(kwh|kw|wh|watt|meter|metern)\b/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function roundMarkedUpPriceToWholeEuro(sourcePriceCents) {
@@ -46,7 +79,9 @@ function shopifyPriceToEuros(price) {
 }
 
 function matchSupplierVariant(shopifyVariant, supplierVariants) {
-  if (supplierVariants.length === 1) return supplierVariants[0];
+  if (supplierVariants.length === 1) {
+    return { variant: supplierVariants[0], method: 'ONLY_VARIANT' };
+  }
 
   const shopifySku = String(shopifyVariant.sku || '').trim();
   const strippedSku = shopifySku.replace(/^SM-/i, '');
@@ -55,13 +90,29 @@ function matchSupplierVariant(shopifyVariant, supplierVariants) {
       const supplierSku = String(variant.sku || '').trim();
       return supplierSku && (supplierSku === shopifySku || supplierSku === strippedSku);
     });
-    if (skuMatches.length === 1) return skuMatches[0];
+    if (skuMatches.length === 1) return { variant: skuMatches[0], method: 'SKU' };
   }
 
-  const title = normalizeText(shopifyVariant.title);
-  if (title) {
-    const titleMatches = supplierVariants.filter((variant) => normalizeText(variant.title) === title);
-    if (titleMatches.length === 1) return titleMatches[0];
+  const exactTitle = normalizeText(shopifyVariant.title);
+  if (exactTitle) {
+    const titleMatches = supplierVariants.filter((variant) => normalizeText(variant.title) === exactTitle);
+    if (titleMatches.length === 1) return { variant: titleMatches[0], method: 'EXACT_TITLE' };
+  }
+
+  const canonicalTitle = normalizeVariantTitle(shopifyVariant.title);
+  if (canonicalTitle) {
+    const canonicalMatches = supplierVariants.filter(
+      (variant) => normalizeVariantTitle(variant.title) === canonicalTitle,
+    );
+    if (canonicalMatches.length === 1) return { variant: canonicalMatches[0], method: 'CANONICAL_TITLE' };
+  }
+
+  const compactTitle = compactVariantTitle(shopifyVariant.title);
+  if (compactTitle) {
+    const compactMatches = supplierVariants.filter(
+      (variant) => compactVariantTitle(variant.title) === compactTitle,
+    );
+    if (compactMatches.length === 1) return { variant: compactMatches[0], method: 'COMPACT_TITLE' };
   }
 
   return null;
@@ -106,7 +157,7 @@ async function fetchJson(url) {
     try {
       const response = await fetch(url, {
         headers: {
-          'user-agent': 'SolarMeister-Balkonstrom-Sync/1.4',
+          'user-agent': 'SolarMeister-Balkonstrom-Sync/1.5',
           accept: 'application/json,text/javascript,*/*;q=0.8',
         },
         redirect: 'follow',
@@ -115,6 +166,7 @@ async function fetchJson(url) {
       if (response.ok) return response.json();
 
       const error = new Error(`HTTP ${response.status} for ${url}`);
+      error.httpStatus = response.status;
       lastError = error;
 
       if (!shouldRetrySupplierStatus(response.status) || attempt >= SUPPLIER_MAX_RETRIES) {
@@ -132,7 +184,7 @@ async function fetchJson(url) {
     } catch (error) {
       lastError = error;
       const statusMatch = String(error.message || '').match(/^HTTP (\d+)/);
-      const status = statusMatch ? Number(statusMatch[1]) : null;
+      const status = Number(error.httpStatus || (statusMatch ? Number(statusMatch[1]) : 0)) || null;
 
       if (status !== null || attempt >= SUPPLIER_MAX_RETRIES) throw error;
 
@@ -148,9 +200,53 @@ async function fetchJson(url) {
   throw lastError || new Error(`Failed to fetch ${url}`);
 }
 
-async function supplierProduct(sourceHandle) {
-  const url = `https://www.balkonstrom.com/products/${sourceHandle}.js`;
-  const product = await fetchJson(url);
+function extractHandleFromUrl(url) {
+  const match = String(url || '').match(/\/products\/([^/?#]+)/i);
+  return match ? match[1] : null;
+}
+
+async function resolveSupplierHandleByTitle(productTitle) {
+  const params = new URLSearchParams({
+    q: productTitle,
+    'resources[type]': 'product',
+    'resources[limit]': '10',
+  });
+  const searchUrl = `https://www.balkonstrom.com/search/suggest.json?${params.toString()}`;
+  const payload = await fetchJson(searchUrl);
+  const results = payload?.resources?.results?.products;
+  if (!Array.isArray(results) || results.length === 0) return null;
+
+  const normalizedTarget = normalizeProductTitle(productTitle);
+  const exactMatches = results.filter(
+    (item) => normalizeProductTitle(item.title) === normalizedTarget,
+  );
+  if (exactMatches.length !== 1) return null;
+
+  return extractHandleFromUrl(exactMatches[0].url);
+}
+
+async function supplierProduct(requestedHandle, productTitle) {
+  let sourceHandle = requestedHandle;
+  let url = `https://www.balkonstrom.com/products/${sourceHandle}.js`;
+  let product;
+  let resolutionMethod = 'HANDLE';
+
+  try {
+    product = await fetchJson(url);
+  } catch (error) {
+    const status = Number(error.httpStatus || String(error.message || '').match(/^HTTP (\d+)/)?.[1] || 0);
+    if (status !== 404) throw error;
+
+    const resolvedHandle = await resolveSupplierHandleByTitle(productTitle);
+    if (!resolvedHandle || resolvedHandle === sourceHandle) throw error;
+
+    sourceHandle = resolvedHandle;
+    url = `https://www.balkonstrom.com/products/${sourceHandle}.js`;
+    product = await fetchJson(url);
+    resolutionMethod = 'TITLE_SEARCH';
+    console.log(`Resolved Balkonstrom handle by exact product title: ${requestedHandle} -> ${sourceHandle}`);
+  }
+
   if (!product || !Array.isArray(product.variants) || product.variants.length === 0) {
     throw new Error(`No variants returned by Balkonstrom for ${sourceHandle}`);
   }
@@ -164,7 +260,9 @@ async function supplierProduct(sourceHandle) {
   return {
     available,
     url,
+    sourceHandle,
     sourceTitle: product.title || sourceHandle,
+    resolutionMethod,
     variants: product.variants,
   };
 }
@@ -226,10 +324,10 @@ async function listSupplierProducts() {
     const data = await shopifyGraphQL(LIST_PRODUCTS, { first: 100, after });
     const connection = data.products;
     for (const product of connection.nodes) {
-      const supplierProduct = product.variants.nodes.some((variant) =>
+      const isSupplierProduct = product.variants.nodes.some((variant) =>
         typeof variant.sku === 'string' && variant.sku.startsWith('SM-')
       );
-      if (supplierProduct) products.push(product);
+      if (isSupplierProduct) products.push(product);
     }
     after = connection.pageInfo.hasNextPage ? connection.pageInfo.endCursor : null;
   } while (after);
@@ -244,10 +342,11 @@ let priceSkipped = 0;
 const products = await listSupplierProducts();
 
 for (const product of products) {
-  const sourceHandle = SOURCE_HANDLE_OVERRIDES.get(product.handle) || product.handle;
+  const requestedSourceHandle = SOURCE_HANDLE_OVERRIDES.get(product.handle) || product.handle;
 
   try {
-    const supplier = await supplierProduct(sourceHandle);
+    const supplier = await supplierProduct(requestedSourceHandle, product.title);
+    const sourceHandle = supplier.sourceHandle;
     const policy = supplier.available ? 'CONTINUE' : 'DENY';
     const updatesById = new Map();
 
@@ -256,19 +355,20 @@ for (const product of products) {
         updatesById.set(variant.id, { id: variant.id, inventoryPolicy: policy });
       }
 
-      const supplierVariant = matchSupplierVariant(variant, supplier.variants);
+      const matched = matchSupplierVariant(variant, supplier.variants);
+      const supplierVariant = matched?.variant || null;
       const currentPrice = shopifyPriceToEuros(variant.price);
 
       if (!supplierVariant) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_UNMATCHED_VARIANT', currentPrice });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, check: 'PRICE', status: 'SKIP_UNMATCHED_VARIANT', currentPrice });
         continue;
       }
 
       const sourcePriceCents = Number(supplierVariant.price);
       if (!Number.isInteger(sourcePriceCents) || sourcePriceCents <= 0) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_INVALID_SOURCE_PRICE', sourcePriceCents, currentPrice });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_INVALID_SOURCE_PRICE', sourcePriceCents, currentPrice });
         continue;
       }
 
@@ -278,29 +378,29 @@ for (const product of products) {
 
       if (currentPrice === null) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_INVALID_SHOPIFY_PRICE', sourcePrice, targetPrice, currentPrice: variant.price });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_INVALID_SHOPIFY_PRICE', sourcePrice, targetPrice, currentPrice: variant.price });
         continue;
       }
 
       const differenceRatio = Math.abs(targetPrice - currentPrice) / currentPrice;
       if (differenceRatio > MAX_PRICE_CHANGE_RATIO) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'SKIP_SUSPICIOUS_CHANGE', sourcePrice, currentPrice, targetPrice, differencePct: `${(differenceRatio * 100).toFixed(1)}%` });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_SUSPICIOUS_CHANGE', sourcePrice, currentPrice, targetPrice, differencePct: `${(differenceRatio * 100).toFixed(1)}%` });
         continue;
       }
 
       if (Math.abs(currentPrice - targetPrice) < 0.005) {
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'PARITY_OK', sourcePrice, currentPrice, targetPrice });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'PARITY_OK', sourcePrice, currentPrice, targetPrice });
         continue;
       }
 
       if (PRICE_DRY_RUN || DRY_RUN) {
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'WOULD_UPDATE', sourcePrice, currentPrice, targetPrice });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'WOULD_UPDATE', sourcePrice, currentPrice, targetPrice });
       } else {
         const pending = updatesById.get(variant.id) || { id: variant.id };
         pending.price = targetPrice.toFixed(2);
         updatesById.set(variant.id, pending);
-        report.push({ product: product.title, variant: variant.title, sourceHandle, check: 'PRICE', status: 'UPDATE_QUEUED', sourcePrice, currentPrice, targetPrice });
+        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'UPDATE_QUEUED', sourcePrice, currentPrice, targetPrice });
       }
     }
 
@@ -325,6 +425,8 @@ for (const product of products) {
     report.push({
       product: product.title,
       sourceHandle,
+      requestedSourceHandle,
+      sourceResolution: supplier.resolutionMethod,
       check: 'AVAILABILITY',
       supplier: supplier.available ? 'AVAILABLE' : 'SOLD_OUT',
       shopifyPolicy: policy,
@@ -333,7 +435,7 @@ for (const product of products) {
     });
   } catch (error) {
     failures += 1;
-    report.push({ product: product.title, sourceHandle, check: 'PRODUCT', status: 'FAILED', supplier: 'UNKNOWN', shopifyPolicy: 'UNCHANGED', error: error.message });
+    report.push({ product: product.title, sourceHandle: requestedSourceHandle, check: 'PRODUCT', status: 'FAILED', supplier: 'UNKNOWN', shopifyPolicy: 'UNCHANGED', error: error.message });
   }
 }
 
