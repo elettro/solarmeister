@@ -8,7 +8,8 @@ from pathlib import Path
 
 REPORT_PATH = Path(os.environ.get('SYNC_REPORT_PATH', 'sync-report.json'))
 SMTP_HOST = os.environ.get('SMTP_HOST', '')
-SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
+SMTP_PORT_RAW = os.environ.get('SMTP_PORT', '').strip()
+SMTP_PORT = int(SMTP_PORT_RAW) if SMTP_PORT_RAW else 587
 SMTP_USERNAME = os.environ.get('SMTP_USERNAME', '')
 SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
 SMTP_FROM = os.environ.get('SMTP_FROM', SMTP_USERNAME)
