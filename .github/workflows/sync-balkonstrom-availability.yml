@@ -3,7 +3,9 @@ name: Sync Balkonstrom Availability + Price
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 5 * * *'
+    # GitHub cron is UTC. Run at both possible UTC equivalents, then gate on Europe/Berlin.
+    - cron: '1 6 * * *'
+    - cron: '1 7 * * *'
 
 permissions:
   contents: read
@@ -11,17 +13,34 @@ permissions:
 jobs:
   sync-availability:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
+      - name: Check Berlin schedule
+        id: berlin_gate
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          elif [ "$(TZ=Europe/Berlin date +%H%M)" = "0801" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping duplicate UTC trigger. It is not 08:01 in Berlin."
+          fi
+
       - name: Check out repository
+        if: steps.berlin_gate.outputs.should_run == 'true'
         uses: actions/checkout@v4
 
       - name: Set up Node.js
+        if: steps.berlin_gate.outputs.should_run == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Sync supplier availability and audit price parity
+        id: sync
+        if: steps.berlin_gate.outputs.should_run == 'true'
         env:
           SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
           SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
@@ -29,4 +48,19 @@ jobs:
           PRICE_DRY_RUN: '1'
           PRICE_MARKUP: '0.17'
           MAX_PRICE_CHANGE_RATIO: '0.50'
+          SYNC_REPORT_PATH: sync-report.json
         run: node scripts/sync-balkonstrom-availability.mjs
+
+      - name: Email SolarMeister sync report
+        if: always() && steps.berlin_gate.outputs.should_run == 'true'
+        env:
+          SYNC_REPORT_PATH: sync-report.json
+          SYNC_REPORT_TO: dpalermo@elettro.com,fs@neckermann-strom.de
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          GITHUB_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SYNC_STEP_OUTCOME: ${{ steps.sync.outcome }}
+        run: python3 scripts/send-sync-report.py
