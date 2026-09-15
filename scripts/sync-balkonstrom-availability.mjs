@@ -27,6 +27,20 @@ const SOURCE_HANDLE_OVERRIDES = new Map([
   ['ecoflow-delta-pro-3-powerstation', 'ecoflow-delta-pro-3'],
 ]);
 
+const GENERIC_PRODUCT_TOKENS = new Set([
+  'mit', 'und', 'oder', 'der', 'die', 'das', 'ein', 'eine', 'set', 'pro', 'premium', 'basic',
+  'bifazial', 'balkon', 'balcony', 'solarmeister', 'komplett', 'komplettset', 'inkl', 'inklusive',
+]);
+
+class SourceProductRemovedError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'SourceProductRemovedError';
+    this.code = 'SOURCE_REMOVED';
+    Object.assign(this, details);
+  }
+}
+
 function normalizeText(value) {
   return String(value || '')
     .normalize('NFKC')
@@ -41,6 +55,7 @@ function normalizeProductTitle(value) {
   return normalizeText(value)
     .replace(/[®™]/g, '')
     .replace(/\s*[-–—]\s*/g, ' ')
+    .replace(/[^a-z0-9äöüß.+/ -]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -64,12 +79,55 @@ function compactVariantTitle(value) {
     .trim();
 }
 
+function productTokens(value) {
+  return normalizeProductTitle(value)
+    .split(/\s+/)
+    .filter((token) => token.length >= 2 && !GENERIC_PRODUCT_TOKENS.has(token));
+}
+
+function identityTokens(value) {
+  return [...new Set(productTokens(value).filter((token) =>
+    /[a-zäöüß]\d|\d[a-zäöüß]/i.test(token) || /^\d{3,}(?:\.\d+)?$/.test(token)
+  ))];
+}
+
+function safeTitleSimilarity(targetTitle, candidateTitle) {
+  const target = [...new Set(productTokens(targetTitle))];
+  const candidate = new Set(productTokens(candidateTitle));
+  if (!target.length) return 0;
+  const overlap = target.filter((token) => candidate.has(token)).length;
+  return overlap / target.length;
+}
+
+function extractVariantConfiguration(value) {
+  const text = normalizeVariantTitle(value);
+  const models = [...new Set(text.match(/\b[a-z]{1,12}\d[a-z0-9-]*\b/gi) || [])].map((v) => v.toLowerCase());
+  let quantity = null;
+  const quantityMatch = text.match(/(?:^|\s)(\d+)\s*x\s+[a-z0-9]/i);
+  if (quantityMatch) quantity = Number(quantityMatch[1]);
+  if (quantity === null && /\bohne\s+(?:zusatz)?(?:batterie|speicher|akku)\b/.test(text)) quantity = 0;
+  const capacities = [...new Set((text.match(/\b\d+(?:\.\d+)?\s*kwh\b/g) || []).map((v) => v.replace(/\s+/g, '')))];
+  return { models, quantity, capacities };
+}
+
+function configurationMatches(target, candidate) {
+  if (target.models.length) {
+    const candidateModels = new Set(candidate.models);
+    if (!target.models.every((model) => candidateModels.has(model))) return false;
+  }
+  if (target.quantity !== null && candidate.quantity !== target.quantity) return false;
+  if (target.capacities.length && candidate.capacities.length) {
+    const candidateCapacities = new Set(candidate.capacities);
+    if (!target.capacities.some((capacity) => candidateCapacities.has(capacity))) return false;
+  }
+  return target.models.length > 0 || target.quantity !== null || target.capacities.length > 0;
+}
+
 function roundMarkedUpPriceToWholeEuro(sourcePriceCents) {
   if (!Number.isInteger(sourcePriceCents) || sourcePriceCents <= 0) {
     throw new Error(`Invalid supplier price in cents: ${sourcePriceCents}`);
   }
-  const sourceEuros = sourcePriceCents / 100;
-  return Math.round(sourceEuros * (1 + PRICE_MARKUP));
+  return Math.round((sourcePriceCents / 100) * (1 + PRICE_MARKUP));
 }
 
 function shopifyPriceToEuros(price) {
@@ -79,9 +137,7 @@ function shopifyPriceToEuros(price) {
 }
 
 function matchSupplierVariant(shopifyVariant, supplierVariants) {
-  if (supplierVariants.length === 1) {
-    return { variant: supplierVariants[0], method: 'ONLY_VARIANT' };
-  }
+  if (supplierVariants.length === 1) return { variant: supplierVariants[0], method: 'ONLY_VARIANT' };
 
   const shopifySku = String(shopifyVariant.sku || '').trim();
   const strippedSku = shopifySku.replace(/^SM-/i, '');
@@ -95,25 +151,27 @@ function matchSupplierVariant(shopifyVariant, supplierVariants) {
 
   const exactTitle = normalizeText(shopifyVariant.title);
   if (exactTitle) {
-    const titleMatches = supplierVariants.filter((variant) => normalizeText(variant.title) === exactTitle);
-    if (titleMatches.length === 1) return { variant: titleMatches[0], method: 'EXACT_TITLE' };
+    const matches = supplierVariants.filter((variant) => normalizeText(variant.title) === exactTitle);
+    if (matches.length === 1) return { variant: matches[0], method: 'EXACT_TITLE' };
   }
 
   const canonicalTitle = normalizeVariantTitle(shopifyVariant.title);
   if (canonicalTitle) {
-    const canonicalMatches = supplierVariants.filter(
-      (variant) => normalizeVariantTitle(variant.title) === canonicalTitle,
-    );
-    if (canonicalMatches.length === 1) return { variant: canonicalMatches[0], method: 'CANONICAL_TITLE' };
+    const matches = supplierVariants.filter((variant) => normalizeVariantTitle(variant.title) === canonicalTitle);
+    if (matches.length === 1) return { variant: matches[0], method: 'CANONICAL_TITLE' };
   }
 
   const compactTitle = compactVariantTitle(shopifyVariant.title);
   if (compactTitle) {
-    const compactMatches = supplierVariants.filter(
-      (variant) => compactVariantTitle(variant.title) === compactTitle,
-    );
-    if (compactMatches.length === 1) return { variant: compactMatches[0], method: 'COMPACT_TITLE' };
+    const matches = supplierVariants.filter((variant) => compactVariantTitle(variant.title) === compactTitle);
+    if (matches.length === 1) return { variant: matches[0], method: 'COMPACT_TITLE' };
   }
+
+  const targetConfig = extractVariantConfiguration(shopifyVariant.title);
+  const configMatches = supplierVariants.filter((variant) =>
+    configurationMatches(targetConfig, extractVariantConfiguration(variant.title))
+  );
+  if (configMatches.length === 1) return { variant: configMatches[0], method: 'CONFIGURATION' };
 
   return null;
 }
@@ -123,10 +181,8 @@ function sleep(ms) {
 }
 
 let nextSupplierRequestAt = 0;
-
 async function throttleSupplierRequest() {
-  const now = Date.now();
-  const waitMs = Math.max(0, nextSupplierRequestAt - now);
+  const waitMs = Math.max(0, nextSupplierRequestAt - Date.now());
   if (waitMs > 0) await sleep(waitMs);
   nextSupplierRequestAt = Date.now() + SUPPLIER_MIN_REQUEST_INTERVAL_MS;
 }
@@ -134,13 +190,10 @@ async function throttleSupplierRequest() {
 function retryAfterMs(response) {
   const raw = response.headers.get('retry-after');
   if (!raw) return null;
-
   const seconds = Number(raw);
   if (Number.isFinite(seconds) && seconds >= 0) return seconds * 1000;
-
   const retryAt = Date.parse(raw);
   if (Number.isFinite(retryAt)) return Math.max(0, retryAt - Date.now());
-
   return null;
 }
 
@@ -150,53 +203,36 @@ function shouldRetrySupplierStatus(status) {
 
 async function fetchJson(url) {
   let lastError = null;
-
   for (let attempt = 0; attempt <= SUPPLIER_MAX_RETRIES; attempt += 1) {
     await throttleSupplierRequest();
-
     try {
       const response = await fetch(url, {
         headers: {
-          'user-agent': 'SolarMeister-Balkonstrom-Sync/1.5',
+          'user-agent': 'SolarMeister-Balkonstrom-Sync/1.6',
           accept: 'application/json,text/javascript,*/*;q=0.8',
         },
         redirect: 'follow',
       });
-
       if (response.ok) return response.json();
 
       const error = new Error(`HTTP ${response.status} for ${url}`);
       error.httpStatus = response.status;
       lastError = error;
+      if (!shouldRetrySupplierStatus(response.status) || attempt >= SUPPLIER_MAX_RETRIES) throw error;
 
-      if (!shouldRetrySupplierStatus(response.status) || attempt >= SUPPLIER_MAX_RETRIES) {
-        throw error;
-      }
-
-      const headerDelay = retryAfterMs(response);
-      const exponentialDelay = Math.min(
-        SUPPLIER_RETRY_BASE_MS * (2 ** attempt),
-        SUPPLIER_RETRY_MAX_MS,
-      );
-      const waitMs = Math.max(headerDelay || 0, exponentialDelay);
+      const exponentialDelay = Math.min(SUPPLIER_RETRY_BASE_MS * (2 ** attempt), SUPPLIER_RETRY_MAX_MS);
+      const waitMs = Math.max(retryAfterMs(response) || 0, exponentialDelay);
       console.warn(`Balkonstrom HTTP ${response.status}. Retry ${attempt + 1}/${SUPPLIER_MAX_RETRIES} in ${waitMs}ms: ${url}`);
       await sleep(waitMs);
     } catch (error) {
       lastError = error;
-      const statusMatch = String(error.message || '').match(/^HTTP (\d+)/);
-      const status = Number(error.httpStatus || (statusMatch ? Number(statusMatch[1]) : 0)) || null;
-
+      const status = Number(error.httpStatus || String(error.message || '').match(/^HTTP (\d+)/)?.[1] || 0) || null;
       if (status !== null || attempt >= SUPPLIER_MAX_RETRIES) throw error;
-
-      const waitMs = Math.min(
-        SUPPLIER_RETRY_BASE_MS * (2 ** attempt),
-        SUPPLIER_RETRY_MAX_MS,
-      );
+      const waitMs = Math.min(SUPPLIER_RETRY_BASE_MS * (2 ** attempt), SUPPLIER_RETRY_MAX_MS);
       console.warn(`Balkonstrom request error. Retry ${attempt + 1}/${SUPPLIER_MAX_RETRIES} in ${waitMs}ms: ${error.message}`);
       await sleep(waitMs);
     }
   }
-
   throw lastError || new Error(`Failed to fetch ${url}`);
 }
 
@@ -205,24 +241,42 @@ function extractHandleFromUrl(url) {
   return match ? match[1] : null;
 }
 
-async function resolveSupplierHandleByTitle(productTitle) {
+async function searchSupplierProducts(productTitle) {
   const params = new URLSearchParams({
     q: productTitle,
     'resources[type]': 'product',
     'resources[limit]': '10',
   });
-  const searchUrl = `https://www.balkonstrom.com/search/suggest.json?${params.toString()}`;
-  const payload = await fetchJson(searchUrl);
+  const payload = await fetchJson(`https://www.balkonstrom.com/search/suggest.json?${params.toString()}`);
   const results = payload?.resources?.results?.products;
-  if (!Array.isArray(results) || results.length === 0) return null;
+  return Array.isArray(results) ? results : [];
+}
+
+async function resolveSupplierHandleByTitle(productTitle) {
+  const results = await searchSupplierProducts(productTitle);
+  if (!results.length) return null;
 
   const normalizedTarget = normalizeProductTitle(productTitle);
-  const exactMatches = results.filter(
-    (item) => normalizeProductTitle(item.title) === normalizedTarget,
-  );
-  if (exactMatches.length !== 1) return null;
+  const exactMatches = results.filter((item) => normalizeProductTitle(item.title) === normalizedTarget);
+  if (exactMatches.length === 1) {
+    return { handle: extractHandleFromUrl(exactMatches[0].url), method: 'TITLE_SEARCH_EXACT', title: exactMatches[0].title };
+  }
 
-  return extractHandleFromUrl(exactMatches[0].url);
+  const targetIdentity = identityTokens(productTitle);
+  const scored = results
+    .map((item) => ({
+      item,
+      score: safeTitleSimilarity(productTitle, item.title),
+      identityOk: targetIdentity.every((token) => productTokens(item.title).includes(token)),
+    }))
+    .filter((entry) => entry.identityOk && entry.score >= 0.72)
+    .sort((a, b) => b.score - a.score);
+
+  if (scored.length === 1 || (scored.length > 1 && scored[0].score >= scored[1].score + 0.15)) {
+    return { handle: extractHandleFromUrl(scored[0].item.url), method: 'TITLE_SEARCH_SAFE_RENAME', title: scored[0].item.title };
+  }
+
+  return null;
 }
 
 async function supplierProduct(requestedHandle, productTitle) {
@@ -237,14 +291,18 @@ async function supplierProduct(requestedHandle, productTitle) {
     const status = Number(error.httpStatus || String(error.message || '').match(/^HTTP (\d+)/)?.[1] || 0);
     if (status !== 404) throw error;
 
-    const resolvedHandle = await resolveSupplierHandleByTitle(productTitle);
-    if (!resolvedHandle || resolvedHandle === sourceHandle) throw error;
+    const resolved = await resolveSupplierHandleByTitle(productTitle);
+    if (!resolved?.handle || resolved.handle === sourceHandle) {
+      throw new SourceProductRemovedError(`Balkonstrom no longer exposes a safely matching product for ${productTitle}`, {
+        requestedHandle,
+      });
+    }
 
-    sourceHandle = resolvedHandle;
+    sourceHandle = resolved.handle;
     url = `https://www.balkonstrom.com/products/${sourceHandle}.js`;
     product = await fetchJson(url);
-    resolutionMethod = 'TITLE_SEARCH';
-    console.log(`Resolved Balkonstrom handle by exact product title: ${requestedHandle} -> ${sourceHandle}`);
+    resolutionMethod = resolved.method;
+    console.log(`Resolved Balkonstrom product: ${requestedHandle} -> ${sourceHandle} (${resolutionMethod})`);
   }
 
   if (!product || !Array.isArray(product.variants) || product.variants.length === 0) {
@@ -253,15 +311,13 @@ async function supplierProduct(requestedHandle, productTitle) {
 
   const available = product.variants.some((variant) => variant.available === true);
   const explicitlyUnavailable = product.variants.every((variant) => variant.available === false);
-  if (!available && !explicitlyUnavailable) {
-    throw new Error(`Unknown Balkonstrom availability for ${sourceHandle}`);
-  }
+  if (!available && !explicitlyUnavailable) throw new Error(`Unknown Balkonstrom availability for ${sourceHandle}`);
 
   return {
     available,
     url,
     sourceHandle,
-    sourceTitle: product.title || sourceHandle,
+    sourceTitle: String(product.title || sourceHandle).trim(),
     resolutionMethod,
     variants: product.variants,
   };
@@ -286,14 +342,21 @@ const LIST_PRODUCTS = `
   query SupplierProducts($first: Int!, $after: String) {
     products(first: $first, after: $after, query: "status:active") {
       nodes {
-        id
-        title
-        handle
+        id title handle status
         variants(first: 250) {
           nodes { id title sku price inventoryPolicy availableForSale inventoryQuantity }
         }
       }
       pageInfo { hasNextPage endCursor }
+    }
+  }
+`;
+
+const UPDATE_PRODUCT = `
+  mutation UpdateSupplierProduct($product: ProductUpdateInput!) {
+    productUpdate(product: $product) {
+      product { id title handle status }
+      userErrors { field message code }
     }
   }
 `;
@@ -310,12 +373,19 @@ const UPDATE_VARIANTS = `
 const VERIFY_PRODUCT = `
   query VerifyProduct($id: ID!) {
     product(id: $id) {
-      variants(first: 250) {
-        nodes { id price inventoryPolicy }
-      }
+      title status
+      variants(first: 250) { nodes { id price inventoryPolicy } }
     }
   }
 `;
+
+async function updateProduct(productId, input) {
+  if (DRY_RUN) return null;
+  const data = await shopifyGraphQL(UPDATE_PRODUCT, { product: { id: productId, ...input } });
+  const errors = data.productUpdate.userErrors || [];
+  if (errors.length) throw new Error(`Shopify productUpdate errors: ${JSON.stringify(errors)}`);
+  return data.productUpdate.product;
+}
 
 async function listSupplierProducts() {
   const products = [];
@@ -334,11 +404,25 @@ async function listSupplierProducts() {
   return products;
 }
 
+async function fetchSupplierCatalog() {
+  const catalog = [];
+  for (let page = 1; page <= 20; page += 1) {
+    const payload = await fetchJson(`https://www.balkonstrom.com/products.json?limit=250&page=${page}`);
+    const batch = Array.isArray(payload?.products) ? payload.products : [];
+    for (const product of batch) catalog.push({ handle: product.handle, title: product.title });
+    if (batch.length < 250) break;
+  }
+  return catalog;
+}
+
 const report = [];
 let failures = 0;
+let archivedProducts = 0;
+let renamedProducts = 0;
 let priceCandidates = 0;
 let priceUpdates = 0;
 let priceSkipped = 0;
+const matchedSupplierHandles = new Set();
 const products = await listSupplierProducts();
 
 for (const product of products) {
@@ -347,6 +431,21 @@ for (const product of products) {
   try {
     const supplier = await supplierProduct(requestedSourceHandle, product.title);
     const sourceHandle = supplier.sourceHandle;
+    matchedSupplierHandles.add(sourceHandle);
+
+    if (supplier.sourceTitle && supplier.sourceTitle !== product.title) {
+      await updateProduct(product.id, { title: supplier.sourceTitle });
+      renamedProducts += 1;
+      report.push({
+        product: product.title,
+        newProductTitle: supplier.sourceTitle,
+        sourceHandle,
+        sourceResolution: supplier.resolutionMethod,
+        check: 'CATALOG',
+        status: DRY_RUN ? 'WOULD_RENAME' : 'TITLE_CHANGED',
+      });
+    }
+
     const policy = supplier.available ? 'CONTINUE' : 'DENY';
     const updatesById = new Map();
 
@@ -361,14 +460,14 @@ for (const product of products) {
 
       if (!supplierVariant) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, check: 'PRICE', status: 'SKIP_UNMATCHED_VARIANT', currentPrice });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, check: 'PRICE', status: 'SKIP_UNMATCHED_VARIANT', currentPrice });
         continue;
       }
 
       const sourcePriceCents = Number(supplierVariant.price);
       if (!Number.isInteger(sourcePriceCents) || sourcePriceCents <= 0) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_INVALID_SOURCE_PRICE', sourcePriceCents, currentPrice });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_INVALID_SOURCE_PRICE', sourcePriceCents, currentPrice });
         continue;
       }
 
@@ -378,29 +477,29 @@ for (const product of products) {
 
       if (currentPrice === null) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_INVALID_SHOPIFY_PRICE', sourcePrice, targetPrice, currentPrice: variant.price });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_INVALID_SHOPIFY_PRICE', sourcePrice, targetPrice, currentPrice: variant.price });
         continue;
       }
 
       const differenceRatio = Math.abs(targetPrice - currentPrice) / currentPrice;
       if (differenceRatio > MAX_PRICE_CHANGE_RATIO) {
         priceSkipped += 1;
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_SUSPICIOUS_CHANGE', sourcePrice, currentPrice, targetPrice, differencePct: `${(differenceRatio * 100).toFixed(1)}%` });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'SKIP_SUSPICIOUS_CHANGE', sourcePrice, currentPrice, targetPrice, differencePct: `${(differenceRatio * 100).toFixed(1)}%` });
         continue;
       }
 
       if (Math.abs(currentPrice - targetPrice) < 0.005) {
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'PARITY_OK', sourcePrice, currentPrice, targetPrice });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'PARITY_OK', sourcePrice, currentPrice, targetPrice });
         continue;
       }
 
       if (PRICE_DRY_RUN || DRY_RUN) {
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'WOULD_UPDATE', sourcePrice, currentPrice, targetPrice });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'WOULD_UPDATE', sourcePrice, currentPrice, targetPrice });
       } else {
         const pending = updatesById.get(variant.id) || { id: variant.id };
         pending.price = targetPrice.toFixed(2);
         updatesById.set(variant.id, pending);
-        report.push({ product: product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'UPDATE_QUEUED', sourcePrice, currentPrice, targetPrice });
+        report.push({ product: supplier.sourceTitle || product.title, variant: variant.title, sourceHandle, sourceResolution: supplier.resolutionMethod, variantMatch: matched.method, check: 'PRICE', status: 'UPDATE_QUEUED', sourcePrice, currentPrice, targetPrice });
       }
     }
 
@@ -423,7 +522,7 @@ for (const product of products) {
     }
 
     report.push({
-      product: product.title,
+      product: supplier.sourceTitle || product.title,
       sourceHandle,
       requestedSourceHandle,
       sourceResolution: supplier.resolutionMethod,
@@ -434,21 +533,65 @@ for (const product of products) {
       dryRun: DRY_RUN,
     });
   } catch (error) {
+    if (error?.code === 'SOURCE_REMOVED') {
+      try {
+        await updateProduct(product.id, { status: 'ARCHIVED' });
+        archivedProducts += 1;
+        report.push({
+          product: product.title,
+          sourceHandle: requestedSourceHandle,
+          check: 'CATALOG',
+          status: DRY_RUN ? 'WOULD_ARCHIVE_SOURCE_REMOVED' : 'SOURCE_REMOVED_ARCHIVED',
+          shopifyPolicy: 'ARCHIVED',
+          error: error.message,
+        });
+        console.warn(`${DRY_RUN ? 'Would archive' : 'Archived'} source-removed product: ${product.title}`);
+      } catch (archiveError) {
+        failures += 1;
+        report.push({ product: product.title, sourceHandle: requestedSourceHandle, check: 'PRODUCT', status: 'FAILED_ARCHIVE', supplier: 'MISSING', shopifyPolicy: 'UNCHANGED', error: archiveError.message });
+      }
+      continue;
+    }
+
     failures += 1;
     report.push({ product: product.title, sourceHandle: requestedSourceHandle, check: 'PRODUCT', status: 'FAILED', supplier: 'UNKNOWN', shopifyPolicy: 'UNCHANGED', error: error.message });
   }
 }
 
+let supplierCatalog = [];
+try {
+  supplierCatalog = await fetchSupplierCatalog();
+  for (const item of supplierCatalog) {
+    if (!item.handle || matchedSupplierHandles.has(item.handle)) continue;
+    report.push({
+      product: item.title,
+      sourceHandle: item.handle,
+      check: 'CATALOG',
+      status: 'NEW_SOURCE_PRODUCT',
+      action: 'REVIEW_FOR_IMPORT',
+    });
+  }
+} catch (error) {
+  report.push({ check: 'CATALOG', status: 'SUPPLIER_CATALOG_SCAN_FAILED', error: error.message });
+}
+
 const inventoryUpdates = report.filter((item) => item.check === 'AVAILABILITY').reduce((sum, item) => sum + Number(item.variantsChanged || 0), 0);
 const priceWouldUpdate = report.filter((item) => item.status === 'WOULD_UPDATE').length;
 const priceParity = report.filter((item) => item.status === 'PARITY_OK').length;
-const questionable = report.filter((item) => item.status === 'FAILED' || String(item.status || '').startsWith('SKIP_'));
-const changes = report.filter((item) => item.status === 'WOULD_UPDATE' || item.status === 'UPDATE_QUEUED' || (item.check === 'AVAILABILITY' && Number(item.variantsChanged || 0) > 0));
+const newSupplierProducts = report.filter((item) => item.status === 'NEW_SOURCE_PRODUCT').length;
+const questionable = report.filter((item) => item.status === 'FAILED' || item.status === 'FAILED_ARCHIVE' || item.status === 'SUPPLIER_CATALOG_SCAN_FAILED' || String(item.status || '').startsWith('SKIP_'));
+const changes = report.filter((item) => ['WOULD_UPDATE', 'UPDATE_QUEUED', 'TITLE_CHANGED', 'WOULD_RENAME', 'SOURCE_REMOVED_ARCHIVED', 'WOULD_ARCHIVE_SOURCE_REMOVED', 'NEW_SOURCE_PRODUCT'].includes(item.status) || (item.check === 'AVAILABILITY' && Number(item.variantsChanged || 0) > 0));
 
 const structuredReport = {
   generatedAt: new Date().toISOString(),
   store: SHOPIFY_STORE_DOMAIN,
   source: 'https://www.balkonstrom.com',
+  catalogPolicy: {
+    supplierIsSourceOfTruth: true,
+    renameFromSupplier: true,
+    removedSupplierProducts: 'ARCHIVE',
+    newSupplierProducts: 'REPORT_FOR_IMPORT',
+  },
   pricing: {
     markupPercent: PRICE_MARKUP * 100,
     roundingRule: 'nearest whole euro',
@@ -463,6 +606,10 @@ const structuredReport = {
   },
   summary: {
     productsChecked: products.length,
+    supplierCatalogProducts: supplierCatalog.length,
+    renamedProducts,
+    archivedProducts,
+    newSupplierProducts,
     inventoryUpdates,
     priceCandidates,
     priceUpdates,
@@ -482,14 +629,15 @@ await writeFile(REPORT_PATH, `${JSON.stringify(structuredReport, null, 2)}\n`, '
 console.log(`Structured report written to ${REPORT_PATH}.`);
 console.table(report);
 console.log(`Checked ${products.length} active SolarMeister supplier product(s).`);
+console.log(`Catalog lifecycle: ${renamedProducts} renamed, ${archivedProducts} archived because source removed, ${newSupplierProducts} new supplier product(s) flagged.`);
 console.log(`Price candidates checked: ${priceCandidates}. Price writes: ${priceUpdates}. Price skips: ${priceSkipped}.`);
 console.log(`Price mode: ${PRICE_DRY_RUN || DRY_RUN ? 'DRY RUN - no price writes' : 'LIVE - validated price writes enabled'}.`);
 console.log(`Price rule: Balkonstrom x ${(1 + PRICE_MARKUP).toFixed(2)}, rounded to the nearest whole euro.`);
 console.log(`Supplier request policy: ${SUPPLIER_MIN_REQUEST_INTERVAL_MS}ms minimum interval, up to ${SUPPLIER_MAX_RETRIES} retries with backoff.`);
 
 if (failures) {
-  console.error(`${failures} product(s) could not be fully verified. Unverified changes were intentionally left unchanged.`);
+  console.error(`${failures} product(s) could not be safely reconciled. Unverified changes were intentionally left unchanged.`);
   process.exitCode = 1;
 } else {
-  console.log('Balkonstrom sync complete. Availability is live. Price parity audit completed under the configured price mode.');
+  console.log('Balkonstrom catalog reconciliation complete. Availability and catalog lifecycle are live. Price parity remains under the configured price mode.');
 }
