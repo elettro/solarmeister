@@ -38,12 +38,45 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Get fresh Shopify Admin API token
+        if: steps.berlin_gate.outputs.should_run == 'true'
+        shell: bash
+        env:
+          SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$SHOPIFY_CLIENT_ID" ] || [ -z "$SHOPIFY_CLIENT_SECRET" ]; then
+            echo "Missing SHOPIFY_CLIENT_ID or SHOPIFY_CLIENT_SECRET repository secret."
+            exit 2
+          fi
+
+          RESPONSE="$(curl --fail-with-body --silent --show-error \
+            -X POST "https://${SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token" \
+            -H 'Content-Type: application/json' \
+            --data "$(jq -n \
+              --arg grant_type 'client_credentials' \
+              --arg client_id "$SHOPIFY_CLIENT_ID" \
+              --arg client_secret "$SHOPIFY_CLIENT_SECRET" \
+              '{grant_type:$grant_type,client_id:$client_id,client_secret:$client_secret}')")"
+
+          TOKEN="$(printf '%s' "$RESPONSE" | jq -r '.access_token // empty')"
+          if [ -z "$TOKEN" ]; then
+            echo "Shopify did not return an Admin API access token. Check the app installation, scopes, and credentials."
+            exit 2
+          fi
+
+          echo "::add-mask::$TOKEN"
+          echo "SHOPIFY_ADMIN_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          echo "Fresh Shopify Admin API token acquired for this run."
+
       - name: Sync supplier availability and audit price parity
         id: sync
         if: steps.berlin_gate.outputs.should_run == 'true'
         env:
           SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
-          SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
           SHOPIFY_API_VERSION: '2026-07'
           PRICE_DRY_RUN: '1'
           PRICE_MARKUP: '0.17'
