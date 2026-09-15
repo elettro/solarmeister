@@ -14,12 +14,37 @@ SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
 SMTP_FROM = os.environ.get('SMTP_FROM', SMTP_USERNAME)
 REPORT_TO = [x.strip() for x in os.environ.get('SYNC_REPORT_TO', '').split(',') if x.strip()]
 RUN_URL = os.environ.get('GITHUB_RUN_URL', '')
+SYNC_STEP_OUTCOME = os.environ.get('SYNC_STEP_OUTCOME', '')
+PRICE_MARKUP = float(os.environ.get('PRICE_MARKUP', '0.17'))
+MAX_PRICE_CHANGE_RATIO = float(os.environ.get('MAX_PRICE_CHANGE_RATIO', '0.50'))
+PRICE_DRY_RUN = os.environ.get('PRICE_DRY_RUN', '1') != '0'
 
-if not REPORT_PATH.exists():
-    raise SystemExit(f'Report file not found: {REPORT_PATH}')
-
-with REPORT_PATH.open('r', encoding='utf-8') as f:
-    data = json.load(f)
+if REPORT_PATH.exists():
+    with REPORT_PATH.open('r', encoding='utf-8') as f:
+        data = json.load(f)
+else:
+    data = {
+        'summary': {
+            'productsChecked': 0,
+            'inventoryUpdates': 0,
+            'priceUpdates': 0,
+            'priceWouldUpdate': 0,
+            'priceParity': 0,
+            'needReview': 1,
+        },
+        'pricing': {
+            'markupPercent': PRICE_MARKUP * 100,
+            'roundingRule': 'nearest whole euro',
+            'maxPriceChangePercent': MAX_PRICE_CHANGE_RATIO * 100,
+            'mode': 'DRY_RUN' if PRICE_DRY_RUN else 'LIVE',
+        },
+        'questionable': [{
+            'product': 'Sync workflow',
+            'status': 'FAILED',
+            'error': f'Sync ended with outcome {SYNC_STEP_OUTCOME or "unknown"} before a structured report was created.',
+        }],
+        'changes': [],
+    }
 
 summary = data.get('summary', {})
 pricing = data.get('pricing', {})
@@ -38,10 +63,10 @@ inventory_updates = int(summary.get('inventoryUpdates', 0) or 0)
 update_count = inventory_updates + actual_price_updates + would_price_updates
 price_mode = pricing.get('mode', 'UNKNOWN')
 
-if price_mode == 'DRY_RUN':
-    subject = f"SolarMeister Price Audit: {would_price_updates} Differences, {need_review} Need Review"
-elif need_review:
+if need_review:
     subject = f"SolarMeister Sync Report: {update_count} Updates, {need_review} Need Review"
+elif price_mode == 'DRY_RUN':
+    subject = f"SolarMeister Price Audit: {would_price_updates} Differences, 0 Need Review"
 else:
     subject = 'SolarMeister Sync Report: Complete, No Issues'
 
