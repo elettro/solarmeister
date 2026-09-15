@@ -1,4 +1,4 @@
-name: Sync Balkonstrom Availability
+name: Sync Balkonstrom Availability + Price
 
 on:
   workflow_dispatch:
@@ -21,9 +21,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Sync supplier availability to Shopify
+      - name: Sync supplier availability and audit price parity
         env:
           SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
           SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
           SHOPIFY_API_VERSION: '2026-07'
+          PRICE_DRY_RUN: '1'
+          PRICE_MARKUP: '0.17'
+          MAX_PRICE_CHANGE_RATIO: '0.50'
         run: node scripts/sync-balkonstrom-availability.mjs
