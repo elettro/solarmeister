@@ -13,7 +13,7 @@ permissions:
 jobs:
   sync-availability:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Check Berlin schedule
         id: berlin_gate
@@ -82,6 +82,10 @@ jobs:
           PRICE_MARKUP: '0.17'
           MAX_PRICE_CHANGE_RATIO: '0.50'
           SYNC_REPORT_PATH: sync-report.json
+          SUPPLIER_MIN_REQUEST_INTERVAL_MS: '1800'
+          SUPPLIER_MAX_RETRIES: '4'
+          SUPPLIER_RETRY_BASE_MS: '4000'
+          SUPPLIER_RETRY_MAX_MS: '45000'
         run: node scripts/sync-balkonstrom-availability.mjs
 
       - name: Email SolarMeister sync report
