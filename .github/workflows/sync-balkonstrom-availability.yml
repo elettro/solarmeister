@@ -2,6 +2,20 @@ name: Sync Balkonstrom Availability + Price
 
 on:
   workflow_dispatch:
+    inputs:
+      price_mode:
+        description: 'Price mode for this manual run'
+        required: true
+        default: 'dry_run'
+        type: choice
+        options:
+          - dry_run
+          - full_live
+      confirmation:
+        description: 'For full_live only, enter WRITE ALL PRICES'
+        required: false
+        default: ''
+        type: string
   schedule:
     # GitHub cron is UTC. Run at both possible UTC equivalents, then gate on Europe/Berlin.
     - cron: '1 6 * * *'
@@ -27,6 +41,19 @@ jobs:
             echo "should_run=false" >> "$GITHUB_OUTPUT"
             echo "Skipping duplicate UTC trigger. It is not 08:01 in Berlin."
           fi
+
+      - name: Validate manual live-price confirmation
+        if: steps.berlin_gate.outputs.should_run == 'true' && github.event_name == 'workflow_dispatch' && inputs.price_mode == 'full_live'
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -euo pipefail
+          if [ "$CONFIRMATION" != "WRITE ALL PRICES" ]; then
+            echo "Full live price sync blocked. Enter exactly: WRITE ALL PRICES"
+            exit 2
+          fi
+          echo "Full live price sync explicitly confirmed."
 
       - name: Check out repository
         if: steps.berlin_gate.outputs.should_run == 'true'
@@ -72,13 +99,13 @@ jobs:
           echo "SHOPIFY_ADMIN_TOKEN=$TOKEN" >> "$GITHUB_ENV"
           echo "Fresh Shopify Admin API token acquired for this run."
 
-      - name: Sync supplier availability and audit price parity
+      - name: Sync supplier availability and price parity
         id: sync
         if: steps.berlin_gate.outputs.should_run == 'true'
         env:
           SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
           SHOPIFY_API_VERSION: '2026-07'
-          PRICE_DRY_RUN: '1'
+          PRICE_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.price_mode == 'full_live' && inputs.confirmation == 'WRITE ALL PRICES' && '0' || '1' }}
           PRICE_MARKUP: '0.17'
           MAX_PRICE_CHANGE_RATIO: '0.50'
           SYNC_REPORT_PATH: sync-report.json
@@ -93,7 +120,7 @@ jobs:
         env:
           SYNC_REPORT_PATH: sync-report.json
           SYNC_REPORT_TO: dpalermo@elettro.com,fs@neckermann-strom.de
-          PRICE_DRY_RUN: '1'
+          PRICE_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.price_mode == 'full_live' && inputs.confirmation == 'WRITE ALL PRICES' && '0' || '1' }}
           PRICE_MARKUP: '0.17'
           MAX_PRICE_CHANGE_RATIO: '0.50'
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
