@@ -1,0 +1,78 @@
+name: TEST 10 Balkonstrom Prices
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Preview the 10 products or write their prices live'
+        required: true
+        default: preview
+        type: choice
+        options:
+          - preview
+          - live
+      confirmation:
+        description: 'For LIVE only, enter exactly: WRITE 10'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  test-10-prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get fresh Shopify Admin API token
+        shell: bash
+        env:
+          SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$SHOPIFY_CLIENT_ID" ] || [ -z "$SHOPIFY_CLIENT_SECRET" ]; then
+            echo "Missing SHOPIFY_CLIENT_ID or SHOPIFY_CLIENT_SECRET repository secret."
+            exit 2
+          fi
+
+          RESPONSE="$(curl --fail-with-body --silent --show-error \
+            -X POST "https://${SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token" \
+            -H 'Content-Type: application/json' \
+            --data "$(jq -n \
+              --arg grant_type 'client_credentials' \
+              --arg client_id "$SHOPIFY_CLIENT_ID" \
+              --arg client_secret "$SHOPIFY_CLIENT_SECRET" \
+              '{grant_type:$grant_type,client_id:$client_id,client_secret:$client_secret}')")"
+
+          TOKEN="$(printf '%s' "$RESPONSE" | jq -r '.access_token // empty')"
+          if [ -z "$TOKEN" ]; then
+            echo "Shopify did not return an Admin API access token."
+            exit 2
+          fi
+
+          echo "::add-mask::$TOKEN"
+          echo "SHOPIFY_ADMIN_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          echo "Fresh Shopify Admin API token acquired for this run."
+
+      - name: Preview or write TEST 10 prices
+        env:
+          SHOPIFY_STORE_DOMAIN: f3yf3y-qu.myshopify.com
+          SHOPIFY_API_VERSION: '2026-07'
+          STOREFRONT_BASE_URL: https://solarmeister-shop.de
+          TEST10_MODE: ${{ inputs.mode }}
+          TEST10_CONFIRM: ${{ inputs.confirmation }}
+          PRICE_MARKUP: '0.17'
+          MAX_PRICE_CHANGE_RATIO: '0.50'
+        run: node scripts/test-10-balkonstrom-prices.mjs
