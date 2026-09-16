@@ -356,7 +356,7 @@ const UPDATE_PRODUCT = `
   mutation UpdateSupplierProduct($product: ProductUpdateInput!) {
     productUpdate(product: $product) {
       product { id title handle status }
-      userErrors { field message code }
+      userErrors { field message }
     }
   }
 `;
@@ -365,7 +365,7 @@ const UPDATE_VARIANTS = `
   mutation SyncSupplierVariantData($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
     productVariantsBulkUpdate(productId: $productId, variants: $variants) {
       productVariants { id price inventoryPolicy availableForSale inventoryQuantity }
-      userErrors { field message code }
+      userErrors { field message }
     }
   }
 `;
