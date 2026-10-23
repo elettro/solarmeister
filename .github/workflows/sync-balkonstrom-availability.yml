@@ -22,7 +22,7 @@ on:
     - cron: '1 7 * * *'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   sync-availability:
@@ -114,6 +114,13 @@ jobs:
           SUPPLIER_RETRY_BASE_MS: '4000'
           SUPPLIER_RETRY_MAX_MS: '45000'
         run: node scripts/sync-balkonstrom-availability.mjs
+
+      - name: Archive sanitized sync report for dashboard
+        if: always() && steps.berlin_gate.outputs.should_run == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SYNC_REPORT_PATH: sync-report.json
+        run: node scripts/publish-sync-dashboard-report.mjs
 
       - name: Email SolarMeister sync report
         if: always() && steps.berlin_gate.outputs.should_run == 'true'
