@@ -203,6 +203,23 @@
       }
     }
 
+    const hasSocialAssets = [...nav.querySelectorAll('a')].some((link) =>
+      link.href === 'https://elettro.github.io/solarmeister/social-assets/' ||
+      link.textContent.trim().toLowerCase() === 'social assets'
+    );
+
+    if (!hasSocialAssets) {
+      const socialLink = document.createElement('a');
+      socialLink.href = 'https://elettro.github.io/solarmeister/social-assets/';
+      socialLink.textContent = 'Social Assets';
+      const blogsLink = [...nav.querySelectorAll('a')].find((link) => link.textContent.trim().toLowerCase() === 'blogs');
+      if (blogsLink) {
+        nav.insertBefore(socialLink, blogsLink);
+      } else {
+        nav.appendChild(socialLink);
+      }
+    }
+
     if (topbar.classList.contains('sm-nav-enhanced')) return;
 
     const navId = nav.id || `sm-mobile-nav-${index + 1}`;
