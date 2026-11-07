@@ -136,9 +136,11 @@ function shopifyPriceToEuros(price) {
   return value;
 }
 
-function matchSupplierVariant(shopifyVariant, supplierVariants) {
-  if (supplierVariants.length === 1) return { variant: supplierVariants[0], method: 'ONLY_VARIANT' };
-
+function matchSupplierVariant(shopifyVariant, supplierVariants, shopifyVariantCount) {
+  // Never apply a single supplier variant's base price to multiple Shopify options.
+  if (supplierVariants.length === 1 && shopifyVariantCount === 1) {
+    return { variant: supplierVariants[0], method: 'ONE_TO_ONE' };
+  }
   const shopifySku = String(shopifyVariant.sku || '').trim();
   const strippedSku = shopifySku.replace(/^SM-/i, '');
   if (shopifySku) {
@@ -148,31 +150,12 @@ function matchSupplierVariant(shopifyVariant, supplierVariants) {
     });
     if (skuMatches.length === 1) return { variant: skuMatches[0], method: 'SKU' };
   }
-
-  const exactTitle = normalizeText(shopifyVariant.title);
-  if (exactTitle) {
-    const matches = supplierVariants.filter((variant) => normalizeText(variant.title) === exactTitle);
+  const title = normalizeText(shopifyVariant.title);
+  if (title) {
+    const matches = supplierVariants.filter((variant) => normalizeText(variant.title) === title);
     if (matches.length === 1) return { variant: matches[0], method: 'EXACT_TITLE' };
   }
-
-  const canonicalTitle = normalizeVariantTitle(shopifyVariant.title);
-  if (canonicalTitle) {
-    const matches = supplierVariants.filter((variant) => normalizeVariantTitle(variant.title) === canonicalTitle);
-    if (matches.length === 1) return { variant: matches[0], method: 'CANONICAL_TITLE' };
-  }
-
-  const compactTitle = compactVariantTitle(shopifyVariant.title);
-  if (compactTitle) {
-    const matches = supplierVariants.filter((variant) => compactVariantTitle(variant.title) === compactTitle);
-    if (matches.length === 1) return { variant: matches[0], method: 'COMPACT_TITLE' };
-  }
-
-  const targetConfig = extractVariantConfiguration(shopifyVariant.title);
-  const configMatches = supplierVariants.filter((variant) =>
-    configurationMatches(targetConfig, extractVariantConfiguration(variant.title))
-  );
-  if (configMatches.length === 1) return { variant: configMatches[0], method: 'CONFIGURATION' };
-
+  // No fuzzy/configuration fallback for money-changing operations.
   return null;
 }
 
@@ -454,7 +437,7 @@ for (const product of products) {
         updatesById.set(variant.id, { id: variant.id, inventoryPolicy: policy });
       }
 
-      const matched = matchSupplierVariant(variant, supplier.variants);
+      const matched = matchSupplierVariant(variant, supplier.variants, product.variants.length);
       const supplierVariant = matched?.variant || null;
       const currentPrice = shopifyPriceToEuros(variant.price);
 
