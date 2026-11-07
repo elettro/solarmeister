@@ -437,7 +437,7 @@ for (const product of products) {
         updatesById.set(variant.id, { id: variant.id, inventoryPolicy: policy });
       }
 
-      const matched = matchSupplierVariant(variant, supplier.variants, product.variants.length);
+      const matched = matchSupplierVariant(variant, supplier.variants, product.variants.nodes.length);
       const supplierVariant = matched?.variant || null;
       const currentPrice = shopifyPriceToEuros(variant.price);
 
